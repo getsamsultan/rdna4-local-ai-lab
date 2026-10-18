@@ -1,6 +1,8 @@
 # Finding 02 — One config line cost 61% of generation speed
 
-**Date:** 2026-10-18 · **Model:** Qwen3-Coder-Next-UD-Q6_K (80B, ~3B active, 61.3 GB, 3 cards) · **Reported:** [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786)
+> **Correction (2026-10-18):** I first reported this as an ODS bug (#7786). The maintainer checked upstream and was right: `HSA_ENABLE_SDMA=0` has never been in the ODS codebase, and current ODS no longer uses the Lemonade container at all. I confirmed it by searching the full ODS git history: the variable never appears in any commit, and neither do `HSA_DISABLE_P2P` or `HIP_ENABLE_DEVICE_MEM_POOL`. These settings had been added to **my local compose files** during setup. The measurements below stand; the attribution was wrong. Lesson added: check upstream before blaming upstream.
+
+**Date:** 2026-10-18 · **Model:** Qwen3-Coder-Next-UD-Q6_K (80B, ~3B active, 61.3 GB, 3 cards) · **Upstream:** [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786) (see the correction below)
 
 ## The symptom
 
@@ -41,7 +43,7 @@ ODS image, llama-server launched directly, one variable added at a time:
 
 | `docker-compose.amd.yml` | Generation t/s (3 runs) |
 |---|---|
-| `HSA_ENABLE_SDMA=0` (as shipped) | 21.0 / 21.0 / 21.0 |
+| `HSA_ENABLE_SDMA=0` (my local config) | 21.0 / 21.0 / 21.0 |
 | `HSA_ENABLE_SDMA=1` (only change) | **54.3 / 54.3 / 54.3** |
 
 ## Why (best current understanding)
@@ -52,6 +54,7 @@ SDMA is the GPU's dedicated copy engine. With it disabled, transfers between the
 
 - **Benchmarks can miss what real serving hits.** Always check real requests through the real stack.
 - **Defaults carry assumptions.** A stack tuned for one chip can quietly cost a lot on another.
+- **Check upstream before blaming upstream.** A local config file is not the project's config file. Diff against the source before filing.
 - **Hash everything before theorising.** Identical binaries narrowed a huge search space to the environment in two commands.
 
 ## Reproduce it
