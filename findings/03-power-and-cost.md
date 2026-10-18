@@ -43,7 +43,7 @@ USD converted at A$1 = US$0.6946 (last close before 18 Oct 2026). In US dollars:
 
 ## Then count the hardware
 
-With roughly **A$13,000** (~US$9,000) of hardware, the payback period depends entirely on what you compare against:
+With roughly **A$13,000** (~US$9,000) for the complete build (three GPUs, CPU, board, memory, storage, PSU, case and cooling), the payback period depends entirely on what you compare against:
 
 | Compared with | Saving per million output tokens | Tokens to pay back | Time, generating nonstop at 55 t/s |
 |---|---|---|---|
