@@ -21,7 +21,7 @@ I'm Sam Sultan, an infrastructure and operations analyst in Sydney. I built a th
 ## Upstream contributions
 
 - [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786) — `HSA_ENABLE_SDMA=0` cuts llama-server generation by ~61% on discrete RDNA4 (gfx1201)
-- [Osmantic/ODS — discrete RDNA4 setup notes](https://github.com/Osmantic/ODS/issues?q=is%3Aissue+author%3Agetsamsultan) — installer picked the iGPU target (gfx1036), empty `HSA_OVERRIDE_GFX_VERSION` broke detection, configured llama.cpp args not reaching the server
+- [Osmantic/ODS #7787](https://github.com/Osmantic/ODS/issues/7787) — discrete RDNA4 setup notes: installer picked the iGPU target (gfx1036), empty `HSA_OVERRIDE_GFX_VERSION` broke detection, configured llama.cpp args not reaching the server
 
 ## The rig
 

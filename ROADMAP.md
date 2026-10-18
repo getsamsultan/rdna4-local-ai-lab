@@ -22,7 +22,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [x] Wall meter installed; idle, generation and prompt-reading power measured for an 80B model on three cards
 - [x] Cost per million tokens, local vs rented vs a frontier-lab small model, including hardware payback → [Finding 03](findings/03-power-and-cost.md)
 - [x] Found a 2.6× gap between benchmark and real serving; bisected it across nine hypotheses to `HSA_ENABLE_SDMA=0`; fixed (21.0 → 54.3 t/s) → [Finding 02](findings/02-hsa-enable-sdma.md)
-- [x] Reported upstream: [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786) and discrete-RDNA4 setup notes
+- [x] Reported upstream: [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786) and [#7787](https://github.com/Osmantic/ODS/issues/7787) (discrete-RDNA4 setup notes)
 
 ## Next
 
