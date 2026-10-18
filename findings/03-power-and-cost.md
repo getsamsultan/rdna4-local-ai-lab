@@ -28,27 +28,27 @@ Just having the serving stack's ~27 containers running adds ~37 W before any wor
 | | Cost per million |
 |---|---|
 | My rig | **≈ A$0.71** |
-| Same model, rented (cheapest provider, US$0.80) | ≈ A$1.20 |
-| Comparable-class frontier-lab small model (US$5.00) | ≈ A$7.50 |
+| Same model, rented (cheapest provider, US$0.80) | ≈ A$1.15 |
+| Comparable-class frontier-lab small model (US$5.00) | ≈ A$7.20 |
 
 **Reading (input tokens)**
 
 | | Cost per million |
 |---|---|
 | My rig — a million tokens in ~7 minutes | **≈ A$0.03** |
-| Same model, rented (US$0.12) | ≈ A$0.18 |
-| Comparable-class frontier-lab small model (US$1.00) | ≈ A$1.50 |
+| Same model, rented (US$0.12) | ≈ A$0.17 |
+| Comparable-class frontier-lab small model (US$1.00) | ≈ A$1.44 |
 
-USD converted at an assumed A$1.50 = US$1. Cloud prices are list/cheapest-provider prices as of October 2026.
+USD converted at A$1 = US$0.6946 (last close before 18 Oct 2026). In US dollars: ~US$0.49 per million tokens generated, ~US$0.02 per million read. Cloud prices are list/cheapest-provider prices as of October 2026.
 
 ## Then count the hardware
 
-With roughly **A$13,000** of hardware, the payback period depends entirely on what you compare against:
+With roughly **A$13,000** (~US$9,000) of hardware, the payback period depends entirely on what you compare against:
 
 | Compared with | Saving per million output tokens | Tokens to pay back | Time, generating nonstop at 55 t/s |
 |---|---|---|---|
-| Renting the same model | A$0.49 | ~26 billion | **~15 years** |
-| A frontier-lab small model | A$6.79 | ~1.9 billion | **~1.1 years** |
+| Renting the same model | A$0.45 (US$0.31) | ~29 billion | **~17 years** |
+| A frontier-lab small model | A$6.49 (US$4.51) | ~2.0 billion | **~1.2 years** |
 
 ## Conclusion
 

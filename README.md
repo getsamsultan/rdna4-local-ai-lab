@@ -13,8 +13,8 @@ I'm Sam Sultan, an infrastructure and operations analyst in Sydney. I built a th
 | | Finding | Detail |
 |---|---|---|
 | 🔧 | **One config line was costing 61% of generation speed** | `HSA_ENABLE_SDMA=0`, a Strix Halo (APU) setting, cut an 80B model from 54.3 to 21.0 tokens/s on discrete RDNA4 cards. Found by bisection, fixed, and reported upstream. → [Finding 02](findings/02-hsa-enable-sdma.md) |
-| ⚡ | **Electricity: ~A$0.71 per million tokens generated, ~A$0.03 per million read** | Measured at the wall: 80 W idle, 425–440 W generating, up to 886 W reading long prompts. → [Finding 03](findings/03-power-and-cost.md) |
-| ☁️ | **On total cost, the cloud wins** | Against renting the same model, ~A$13k of hardware takes ~15 years of nonstop generation to pay back. Against a frontier-lab small model, ~1 year. Local AI is a control decision, not a cheap-tokens decision. → [Finding 03](findings/03-power-and-cost.md) |
+| ⚡ | **Electricity: ~A$0.71 (US$0.49) per million tokens generated, ~A$0.03 (US$0.02) per million read** | Measured at the wall: 80 W idle, 425–440 W generating, up to 886 W reading long prompts. → [Finding 03](findings/03-power-and-cost.md) |
+| ☁️ | **On total cost, the cloud wins** | Against renting the same model, ~A$13k of hardware takes ~17 years of nonstop generation to pay back. Against a frontier-lab small model, ~1.2 years. Local AI is a control decision, not a cheap-tokens decision. → [Finding 03](findings/03-power-and-cost.md) |
 | 🧩 | **Splitting a model across cards: −7% writing, +50% reading** | Pipeline (layer) split costs ~1 ms per hand-off whether the link is PCIe 5.0 x8 or 4.0 x4. → [Finding 01](findings/01-pcie-topology-and-layer-split.md) |
 | 🔌 | **The chipset slot costs ~12% on its own** | The card on the chipset-attached PCIe 4.0 x4 slot decodes 12% slower alone, with clocks and temperatures matched. Slot swap pending to confirm. → [Finding 01](findings/01-pcie-topology-and-layer-split.md) |
 
