@@ -1,6 +1,6 @@
 # Finding 02 — One config line cost 61% of generation speed
 
-> **Correction (2026-10-18):** I first reported this as an ODS bug (#7786). The maintainer checked upstream and was right: `HSA_ENABLE_SDMA=0` has never been in the ODS codebase, and current ODS no longer uses the Lemonade container at all. I confirmed it by searching the full ODS git history: the variable never appears in any commit, and neither do `HSA_DISABLE_P2P` or `HIP_ENABLE_DEVICE_MEM_POOL`. These settings had been added to **my local compose files** during setup. The measurements below stand; the attribution was wrong. Lesson added: check upstream before blaming upstream.
+> **Correction (2026-10-18):** I first reported this as an ODS bug (#7786). The maintainer checked upstream and was right: `HSA_ENABLE_SDMA=0` has never been in the ODS codebase, and current ODS no longer uses the Lemonade container at all. I confirmed it by searching the full ODS git history: the variable never appears in any commit, and neither do `HSA_DISABLE_P2P` or `HIP_ENABLE_DEVICE_MEM_POOL`. These settings had been added to **my local compose files** during setup. The measurements below stand; the attribution was wrong. Lesson added: check your own config before you blame upstream.
 
 **Date:** 2026-10-18 · **Model:** Qwen3-Coder-Next-UD-Q6_K (80B, ~3B active, 61.3 GB, 3 cards) · **Upstream:** [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786) (see the correction above)
 
@@ -54,7 +54,7 @@ SDMA is the GPU's dedicated copy engine. With it disabled, transfers between the
 
 - **Benchmarks can miss what real serving hits.** Always check real requests through the real stack.
 - **Settings carry assumptions.** A tweak that suits one chip can quietly cost a lot on another, and it can sit unnoticed in a config for weeks.
-- **Check upstream before blaming upstream.** A local config file is not the project's config file. Diff against the source before filing.
+- **Check your own config before you blame upstream.** A local config file is not the project's config file. Diff against the source before filing.
 - **Hash everything before theorising.** Identical binaries narrowed a huge search space to the environment in two commands.
 
 ## Reproduce it
