@@ -42,6 +42,18 @@
 
 > Splitting a model that fits on one card was deliberate — it isolates the cost of splitting. Models too big for one card are where multiple GPUs pay off (see Finding 03, 80B on three cards).
 
+## Follow-up (2026-10-20): the 80B on two cards vs three
+
+The same effect shows up on a model that needs more than one card. Qwen3-Coder-Next 80B Q6_K (61.3 GB), tg2048, identical flags, run in A–B–A order:
+
+| GPUs | tg2048 t/s |
+|---|---|
+| 0,1,2 | 54.64 |
+| 0,1 (CPU lanes only) | **57.28** |
+| 0,1,2 (repeat) | 54.08 |
+
+Dropping the chipset card is **~5% faster**: one less hand-off, and no slow slot in the chain. The catch is memory. Two cards leave very little VRAM for context, so this is a benchmark result until a real serving context is shown to fit. Raw data: [`data/2026-10-20-80b-two-vs-three-cards.md`](../data/2026-10-20-80b-two-vs-three-cards.md)
+
 ![How 3 GPUs share one model](../images/pipeline-parallelism.png)
 
 Raw data: [`data/2026-10-07-rocm72-baseline.md`](../data/2026-10-07-rocm72-baseline.md)
