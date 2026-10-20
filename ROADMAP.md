@@ -25,6 +25,10 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [x] Reported upstream: [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786) and [#7787](https://github.com/Osmantic/ODS/issues/7787). The maintainer showed the SDMA setting came from my local config, not ODS; corrected after checking the full ODS history
 - [ ] Update to current ODS `main` (upstream llama.cpp images, no Lemonade) and re-measure
 
+### Phase 5 — How many cards does the 80B need? · 2026-10-20
+- [x] Two vs three cards, A–B–A order: two CPU-lane cards 57.3 t/s vs 54.6 / 54.1 on three (+5%)
+- [x] 128K context on two cards: four attempts, all ~1 GB short → three cards for long context ([data](data/2026-10-20-80b-two-vs-three-cards.md))
+
 ## Next
 
 - [ ] **Re-test the 35B through the stack** after the SDMA fix (earlier ~45 t/s vs 75 t/s benchmark — likely the same cause)
