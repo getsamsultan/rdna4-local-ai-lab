@@ -52,7 +52,7 @@ The same effect shows up on a model that needs more than one card. Qwen3-Coder-N
 | 0,1 (CPU lanes only) | **57.28** |
 | 0,1,2 (repeat) | 54.08 |
 
-Dropping the chipset card is **~5% faster**: one less hand-off, and no slow slot in the chain. The catch is memory. Two cards leave very little VRAM for context, so this is a benchmark result until a real serving context is shown to fit. Raw data: [`data/2026-10-20-80b-two-vs-three-cards.md`](../data/2026-10-20-80b-two-vs-three-cards.md)
+Dropping the chipset card is **~5% faster**: one less hand-off, and no slow slot in the chain. The catch is memory: two cards are **about 1 GB short of a 128K context**, even with an 8-bit cache and the layers rebalanced (four attempts, all out of memory). So for long-context work the 80B stays on three cards, trading 5% speed for full-precision 128K. Raw data: [`data/2026-10-20-80b-two-vs-three-cards.md`](../data/2026-10-20-80b-two-vs-three-cards.md)
 
 ![How 3 GPUs share one model](../images/pipeline-parallelism.png)
 
