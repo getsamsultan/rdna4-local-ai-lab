@@ -40,3 +40,9 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [ ] **Apartment energy monitoring** — ESP32 on the meter's pulse LED, Pi historian, Grafana: a mini EPMS
 - [ ] **OT security lab** — expose that data over Modbus and show what an unauthenticated industrial protocol looks like on the wire
 - [ ] **Cross-rig comparison** with another builder's server-class setup
+
+## Learning
+
+- [ ] **AMD ROCm Certified: Associate** (ROCm fundamentals, HIP programming, single-GPU optimisation) · target: Oct 2026
+- [ ] **Professional** (multi-GPU inference, vLLM/SGLang serving, multi-node) · when released
+- [ ] **Expert** (capstone: multi-GPU optimisation, MLOps, fleet management) · when released
