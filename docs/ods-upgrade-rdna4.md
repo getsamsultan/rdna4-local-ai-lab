@@ -70,10 +70,11 @@ cd ~/ods-update/ods && ./install.sh
 
 Answer the prompts with the same choices as the original install.
 
-**If it stops at phase 06 with** `/etc/nsswitch.conf: cannot establish a local private group`: the retained `config/litellm/cloud.yaml` (or its folders) is group-writable, and the installer only repairs that automatically when `passwd`/`group` in `/etc/nsswitch.conf` list nothing but `files`/`systemd`. Remove the group-write bit yourself, then re-run:
+**If it stops at phase 06 with** `/etc/nsswitch.conf: cannot establish a local private group`: one of `~/ods`, `config`, `config/litellm` or `config/litellm/cloud.yaml` is group-writable (Ubuntu creates folders `rwxrwxr-x` by default, so `~/ods` itself usually is), and the installer only repairs that automatically when `passwd`/`group` in `/etc/nsswitch.conf` list nothing but `files`/`systemd`. Remove the group-write bit yourself, then re-run:
 
 ```bash
-chmod g-w ~/ods/config ~/ods/config/litellm ~/ods/config/litellm/cloud.yaml
+chmod g-w ~/ods ~/ods/config ~/ods/config/litellm ~/ods/config/litellm/cloud.yaml
+ls -ld ~/ods ~/ods/config ~/ods/config/litellm ~/ods/config/litellm/cloud.yaml   # no w in the group column
 ```
 
 **GPU assignment:** on this rig the installer put llama-server on GPU0+GPU1 (the CPU-lane slots) and whisper, ComfyUI and embeddings on GPU2 (chipset slot). That suits Qwen3.8 (fits on two cards, 4% faster there), but the 80B can't hold 128K context on two cards, so it gets 32K below. The installer moves the Lemonade settings in `.env` to llama.cpp, keeps `data/`, sets `AMD_INFERENCE_BACKEND=vulkan`, and should log `Including docker-compose.override.yml (user overrides)`. Save its output.
