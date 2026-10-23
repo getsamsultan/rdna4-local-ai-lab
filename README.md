@@ -75,6 +75,7 @@ The full method (provenance capture, GPU logger, service stop/restore) is in [`b
 ```
 findings/     One write-up per finding: question, method, data, conclusion
 data/         Raw results and the power/cost workbook (edit the yellow cells to use your own prices)
+docs/         Command reference: the less obvious commands, when I used them, and where they fit in the ROCm certification
 bench-kit/    Runbook, power-monitoring guide and scripts (provenance, GPU logger, benchmark matrix)
 repro/        One-command reproduction of Finding 02
 images/       Diagrams and photos
