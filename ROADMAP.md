@@ -29,6 +29,11 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [x] Two vs three cards, A–B–A order: two CPU-lane cards 57.3 t/s vs 54.6 / 54.1 on three (+5%)
 - [x] 128K context on two cards: four attempts, all ~1 GB short → three cards for long context ([data](data/2026-10-20-80b-two-vs-three-cards.md))
 
+### Phase 6 — A 177B preview of Qwen4 on 96 GB · 2026-10-23
+- [x] Qwen3.8-Flash-Next UD-Q3_K_XL (83.8 GiB) loads on three cards with build 11804: 57.7 GiB on GPUs, 27.5 GiB n-gram table in system RAM
+- [x] First numbers: 1,251 t/s prompt, 36 t/s generation; two cards 4% faster (A–B–A) ([data](data/2026-10-23-qwen38-flash-next-first-run.md))
+- [ ] Why generation is slower than the 80B; context limit on two cards; MTP speculative decoding
+
 ## Next
 
 - [ ] **Re-test the 35B through the stack** after the SDMA fix (earlier ~45 t/s vs 75 t/s benchmark — likely the same cause)

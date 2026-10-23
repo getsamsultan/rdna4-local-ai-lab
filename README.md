@@ -30,6 +30,10 @@ llama.cpp b8763 (HIP, rocWMMA flash attention), ROCm 7.2, `-ngl 99 -sm layer -fa
 | Qwen3.6-35B-A3B | UD-Q4_K_M | 2 (x8 + x8) | 70.3 (tg128) | 3,375 (pp2048) | |
 | Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 3 (x8 + x8 + x4) | 54.6 (tg2048) | 2,373 (pp4096) | 425–440 gen · ≤886 prompt |
 | Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 2 (x8 + x8), `-ub 256` | 57.3 (tg2048) | | |
+| Qwen3.8-Flash-Next 177B-A3B ¹ | UD-Q3_K_XL | 3 (x8 + x8 + x4), `-ub 256` | 36.2 (tg2048) | 1,251 (pp512) | |
+| Qwen3.8-Flash-Next 177B-A3B ¹ | UD-Q3_K_XL | 2 (x8 + x8), `-ub 256` | 37.5 (tg2048) | | |
+
+¹ llama.cpp build 11804 (`ghcr.io/ggml-org/llama.cpp:full-rocm`); 51 B of its parameters are an n-gram lookup table kept in system RAM.
 
 Model hashes, exact commands and every run are in [`data/`](data/).
 
