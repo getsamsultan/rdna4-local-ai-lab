@@ -26,6 +26,6 @@
 - Same prompts, same engine build, one attempt each, no retries. Record the engine build and model hashes with the results.
 - Score the final answer only. Reasoning text is saved but not scored.
 - The rubric was written before any model was run.
-- Results files (`answers-*.jsonl`, `scores.csv`, `key.json`) are committed together once scored, so anyone can re-check them.
+- Working files (`answers-*.jsonl`, `blind-sheet.md`, `scores.csv`, `key.json`) are git-ignored so the key can't leak before scoring. Once scored, copy them all into `data/eval-<date>/` and commit them together, so anyone can re-check them.
 
 The `reasoning_effort` values follow the Qwen3.8 model card; check what the template accepts if a value is rejected.
