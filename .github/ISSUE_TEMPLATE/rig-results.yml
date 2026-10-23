@@ -1,0 +1,60 @@
+name: Submit your rig's numbers
+description: Share llama-bench results from your own hardware so we can compare rigs like-for-like.
+title: "[Results] <GPU> × <count> — <model>"
+labels: ["rig-results"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing. Results are only comparable if the model file and flags match, so please fill in every field.
+        Please don't include usernames, hostnames or anything else you'd rather keep private.
+  - type: input
+    id: gpus
+    attributes:
+      label: GPUs (model × count) and PCIe link per card
+      placeholder: "e.g. 2× RX 9070 XT, PCIe 5.0 x8 + 5.0 x8"
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: CPU, board, RAM
+    validations:
+      required: true
+  - type: input
+    id: software
+    attributes:
+      label: OS, kernel, ROCm/Vulkan/CUDA version, llama.cpp build
+      placeholder: "e.g. Ubuntu 24.04, 7.0, ROCm 7.2, llama.cpp b8763"
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Model file and sha256
+      description: "Run: sha256sum <file>.gguf"
+    validations:
+      required: true
+  - type: textarea
+    id: command
+    attributes:
+      label: Exact llama-bench command
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: llama-bench output (markdown table)
+      render: markdown
+    validations:
+      required: true
+  - type: input
+    id: power
+    attributes:
+      label: Wall power during generation (optional)
+      placeholder: "e.g. 430 W, plug-in meter ±1.5%"
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything unusual (env vars, overclocks, power limits)
