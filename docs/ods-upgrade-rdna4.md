@@ -51,7 +51,8 @@ services:
       - /dev/kfd:/dev/kfd
       - /dev/dri:/dev/dri
     environment:
-      HIP_VISIBLE_DEVICES: "0,1,2"
+      # GPU choice is left to ODS's assignment (LLAMA_SERVER_GPU_INDICES → ROCR_VISIBLE_DEVICES).
+      # Setting HIP_VISIBLE_DEVICES here as well would clash with it.
       LLAMA_ARG_SPLIT_MODE: "layer"
       LLAMA_ARG_FLASH_ATTN: "on"
       # Qwen3.8 reasoning level; other models' templates ignore it.
@@ -67,7 +68,15 @@ git clone --depth 1 https://github.com/Osmantic/ODS.git ~/ods-update
 cd ~/ods-update/ods && ./install.sh
 ```
 
-Answer the prompts with the same choices as the original install. The installer moves the Lemonade settings in `.env` to llama.cpp, keeps `data/`, sets `AMD_INFERENCE_BACKEND=vulkan`, and should log `Including docker-compose.override.yml (user overrides)`. Save its output.
+Answer the prompts with the same choices as the original install.
+
+**If it stops at phase 06 with** `/etc/nsswitch.conf: cannot establish a local private group`: the retained `config/litellm/cloud.yaml` (or its folders) is group-writable, and the installer only repairs that automatically when `passwd`/`group` in `/etc/nsswitch.conf` list nothing but `files`/`systemd`. Remove the group-write bit yourself, then re-run:
+
+```bash
+chmod g-w ~/ods/config ~/ods/config/litellm ~/ods/config/litellm/cloud.yaml
+```
+
+**GPU assignment:** on this rig the installer put llama-server on GPU0+GPU1 (the CPU-lane slots) and whisper, ComfyUI and embeddings on GPU2 (chipset slot). That suits Qwen3.8 (fits on two cards, 4% faster there), but the 80B can't hold 128K context on two cards, so it gets 32K below. The installer moves the Lemonade settings in `.env` to llama.cpp, keeps `data/`, sets `AMD_INFERENCE_BACKEND=vulkan`, and should log `Including docker-compose.override.yml (user overrides)`. Save its output.
 
 ## 5. Set ROCm and the active model
 
@@ -104,7 +113,7 @@ curl -s http://127.0.0.1:11434/v1/models | python3 -m json.tool | grep '"id"'
 rocm-smi --showmeminfo vram | grep Used
 ```
 
-Expect: the b11804 image; ~57.7 GiB across the three R9700s with Qwen3.8 loaded; the model id is the GGUF file name. Then one real request through ODS to check speed against the 35–36 t/s benchmark:
+Expect: the b11804 image; ~57.7 GiB across GPU0 and GPU1 with Qwen3.8 loaded; the model id is the GGUF file name. Then one real request through ODS to check speed against the 35–36 t/s benchmark:
 
 ```bash
 python3 -c "
@@ -123,7 +132,7 @@ cat > ~/ods-model.sh <<'SH'
 set -e; cd ~/ods
 case "$1" in
   qwen38)  F=Qwen3.8-Flash-Next-UD-Q3_K_XL-00001-of-00003.gguf; C=65536 ;;
-  coder80) F=Qwen3-Coder-Next-UD-Q6_K.gguf; C=131072 ;;
+  coder80) F=Qwen3-Coder-Next-UD-Q6_K.gguf; C=32768 ;;   # 2 cards: 128K does not fit
   qwen35)  F=Qwen3.6-35B-A3B-UD-Q4_K_M.gguf; C=131072 ;;
   *) echo "Usage: $0 qwen38|coder80|qwen35"; exit 1 ;;
 esac
