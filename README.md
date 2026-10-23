@@ -82,6 +82,10 @@ images/       Diagrams and photos
 ROADMAP.md    What's been done, and what's next
 ```
 
+## Sister repo
+
+[model-editing-lab](https://github.com/getsamsultan/model-editing-lab): what it costs to change an open model's weights (directional ablation, LoRA), measured on the same rig.
+
 ## What's next
 
 ROCm 10 side-by-side · physical slot swap · multi-user (batched) serving cost · auditing what a "local" stack sends out · whole-apartment energy monitoring with an ESP32 and a mini EPMS · Modbus security lab. Details in [ROADMAP.md](ROADMAP.md).
