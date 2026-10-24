@@ -8,15 +8,8 @@ stop (Ctrl+C) and carry on later: already-scored answers are skipped.
 """
 import csv, json, pathlib, pydoc, re, sys
 here = pathlib.Path(__file__).parent
-prompts = {str(json.loads(l)["n"]): json.loads(l) for l in open(here / "prompts.jsonl")}
-rub = {}
-for block in re.split(r"^## ", (here / "RUBRIC.md").read_text(), flags=re.M)[1:]:
-    head, _, body = block.partition("\n"); n = head.split(".")[0].strip(); rub[n] = body.strip()
-answers = {}
-for block in re.split(r"^## Answer ", (here / "blind-sheet.md").read_text(), flags=re.M)[1:]:
-    label, _, body = block.partition("\n")
-    body = re.split(r"^# \d+\. ", body, flags=re.M)[0]
-    answers[label.strip()] = body.strip()
+from blindlib import prompts as _p, rubric as _r, answers as _a
+prompts, rub, answers = _p(), _r(), _a()
 rows = list(csv.DictReader(open(here / "scores.csv")))
 fields = list(rows[0].keys())
 todo = [r for r in rows if not r["score_0_2"].strip()]

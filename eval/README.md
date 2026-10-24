@@ -30,3 +30,12 @@
 - Working files (`answers-*.jsonl`, `blind-sheet.md`, `scores.csv`, `key.json`) are git-ignored so the key can't leak before scoring. Once scored, copy them all into `data/eval-<date>/` and commit them together, so anyone can re-check them.
 
 The `reasoning_effort` values follow the Qwen3.8 model card; check what the template accepts if a value is rejected.
+
+## AI judges (when no human scores, or as a cross-check)
+
+```bash
+python3 judge.py --url http://127.0.0.1:8098/v1 --name qwen35    # a model that is NOT a contestant
+python3 compare.py scores-claude.csv scores-qwen35.csv           # agreement, disagreements, then totals per config
+```
+
+A contestant model must never judge its own test. Report which judges were used and how often they agreed.
