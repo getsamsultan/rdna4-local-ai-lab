@@ -23,7 +23,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [x] Cost per million tokens, local vs rented vs a frontier-lab small model, including hardware payback → [Finding 03](findings/03-power-and-cost.md)
 - [x] Found a 2.6× gap between benchmark and real serving; bisected it across nine hypotheses to `HSA_ENABLE_SDMA=0`; fixed (21.0 → 54.3 t/s) → [Finding 02](findings/02-hsa-enable-sdma.md)
 - [x] Reported upstream: [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786) and [#7787](https://github.com/Osmantic/ODS/issues/7787). The maintainer showed the SDMA setting came from my local config, not ODS; corrected after checking the full ODS history
-- [ ] Update to current ODS `main` (upstream llama.cpp images, no Lemonade) and re-measure: runbook in [docs/ods-upgrade-rdna4.md](docs/ods-upgrade-rdna4.md), with a newer ROCm engine via a compose override
+- [x] Update to current ODS `main`: done (v3.0.0), but superseded; see Phase 7
 
 ### Phase 5 — How many cards does the 80B need? · 2026-10-20
 - [x] Two vs three cards, A–B–A order: two CPU-lane cards 57.3 t/s vs 54.6 / 54.1 on three (+5%)
@@ -33,6 +33,11 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [x] Qwen3.8-Flash-Next UD-Q3_K_XL (83.8 GiB) loads on three cards with build 11804: 57.7 GiB on GPUs, 27.5 GiB n-gram table in system RAM
 - [x] First numbers: 1,251 t/s prompt, 36 t/s generation; two cards 4% faster (A–B–A) ([data](data/2026-10-23-qwen38-flash-next-first-run.md))
 - [ ] Why generation is slower than the 80B; context limit on two cards; MTP speculative decoding
+
+### Phase 7 — Engine and stack · 2026-10-24 → 25
+- [x] Same 80B, same cards: llama.cpp b8763 → b11804 = **+19%** (51.8 → 61.8 t/s, A–B–A) ([data](data/2026-10-25-engine-upgrade-aba.md))
+- [x] Upgraded the third-party stack to its v3.0.0; it pins AMD to an older engine (b9014) that can't load Qwen3.8 and rejects engine overrides by design. Decision: **leave it and build my own minimal, offline-first ROCm stack** ([upgrade notes](docs/ods-upgrade-rdna4.md))
+- [ ] Find why the old engine dropped from 54.7 to 51.8 t/s between 20 and 25 Oct (provenance diff)
 
 ## Next
 

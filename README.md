@@ -17,6 +17,7 @@ I'm Sam Sultan, an infrastructure and operations analyst in Sydney. I built a th
 | ☁️ | **On total cost, the cloud wins** | Against renting the same model, ~A$13k of hardware takes ~17 years of nonstop generation to pay back. Against a frontier-lab small model, ~1.2 years. Local AI is a control decision, not a cheap-tokens decision. → [Finding 03](findings/03-power-and-cost.md) |
 | 🧩 | **Splitting a model across cards: −7% writing, +50% reading** | Pipeline (layer) split costs ~1 ms per hand-off whether the link is PCIe 5.0 x8 or 4.0 x4. → [Finding 01](findings/01-pcie-topology-and-layer-split.md) |
 | 🧮 | **Two cards are 5% faster for the 80B, but can't hold 128K context** | Dropping the chipset card: 57.3 vs 54.6 t/s (A–B–A tested). But two cards are ~1 GB short of a 128K context even with an 8-bit cache, so long-context work stays on three. → [Finding 01](findings/01-pcie-topology-and-layer-split.md#follow-up-2026-10-20-the-80b-on-two-cards-vs-three) |
+| 🚀 | **Updating llama.cpp alone: +19%** | Same 80B, same three cards, same flags: 51.8 → 61.8 t/s (b8763 → b11804), A–B–A with the old engine repeated at the end. → [data](data/2026-10-25-engine-upgrade-aba.md) |
 | 🔌 | **The chipset slot costs ~12% on its own** | The card on the chipset-attached PCIe 4.0 x4 slot decodes 12% slower alone, with clocks and temperatures matched. Slot swap pending to confirm. → [Finding 01](findings/01-pcie-topology-and-layer-split.md) |
 
 ## Numbers at a glance
@@ -30,10 +31,11 @@ llama.cpp b8763 (HIP, rocWMMA flash attention), ROCm 7.2, `-ngl 99 -sm layer -fa
 | Qwen3.6-35B-A3B | UD-Q4_K_M | 2 (x8 + x8) | 70.3 (tg128) | 3,375 (pp2048) | |
 | Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 3 (x8 + x8 + x4) | 54.6 (tg2048) | 2,373 (pp4096) | 425–440 gen · ≤886 prompt |
 | Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 2 (x8 + x8), `-ub 256` | 57.3 (tg2048) | | |
+| Qwen3-Coder-Next 80B-A3B ¹ | UD-Q6_K | 3 (x8 + x8 + x4), `-ub 256` | **61.8** (tg2048), vs 51.8 on b8763 same session | | |
 | Qwen3.8-Flash-Next 177B-A3B ¹ | UD-Q3_K_XL | 3 (x8 + x8 + x4), `-ub 256` | 36.2 (tg2048) | 1,251 (pp512) | |
 | Qwen3.8-Flash-Next 177B-A3B ¹ | UD-Q3_K_XL | 2 (x8 + x8), `-ub 256` | 37.5 (tg2048) | | |
 
-¹ llama.cpp build 11804 (`ghcr.io/ggml-org/llama.cpp:full-rocm`); 51 B of its parameters are an n-gram lookup table kept in system RAM.
+¹ llama.cpp build 11804 (`ghcr.io/ggml-org/llama.cpp:full-rocm`), +19% over b8763 on the same 80B ([A–B–A](data/2026-10-25-engine-upgrade-aba.md)). Qwen3.8: 51 B of its parameters are an n-gram lookup table kept in system RAM.
 
 Model hashes, exact commands and every run are in [`data/`](data/).
 
