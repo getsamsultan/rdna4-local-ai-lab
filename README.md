@@ -70,7 +70,7 @@ The full method (provenance capture, GPU logger, service stop/restore) is in [`b
 
 1. **Provenance before numbers.** OS, kernel, CPU governor, PCIe links, ROCm, llama.cpp commit and the model's sha256 are recorded with every run.
 2. **One variable at a time.** Every comparison changes exactly one thing.
-3. **Repeat and check.** 3–5 runs per test, a repeat of the first configuration at the end (heat-soak check), and a sanity check that results are physically possible.
+3. **Repeat and check: A–B–A, the omega-3 of benchmarking.** 3–5 runs per test, run in A–B–A order: the baseline, the change, then the baseline again. If the two A runs agree, any difference in B is the change, not heat, warm-up or drift. Plus a sanity check that results are physically possible.
 4. **Benchmark *and* real use.** `llama-bench` numbers are checked against real requests through the serving stack — Finding 02 only showed up in real serving.
 5. **Wording follows evidence.** "Points to" until it's proven.
 
