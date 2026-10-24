@@ -1,5 +1,7 @@
 # Upgrading ODS from the Lemonade era to llama.cpp on 3× R9700 (ROCm), with a newer engine
 
+> **Outcome (2026-10-24):** steps 0 and 4 worked (the stack reached v3.0.0 after the permissions fix). Step 3 did not: v3.0.0 rejects any override of its core `llama-server` service ("collides with a built-in core service name"), so the newer engine can't be swapped in this way. The supported alternative is to run your own llama-server and connect the stack to it as an external OpenAI-compatible server (`./install.sh --external-llm-url … --external-llm-provider openai-compatible`). I chose to leave the stack instead. Kept here as a record.
+
 **Goal:** move a Lemonade-era ODS install (v2.6.0) to current ODS `main`, keep running on **ROCm** (not the new Vulkan default), use a **newer llama.cpp build** than ODS pins so Qwen3.8-Flash-Next (`qwen4exp`) loads, and keep two other models switchable for testing.
 
 **Why the override:** as of 22 Oct 2026, ODS pins AMD to llama.cpp **b9014**, and ODS's own `config/llama-cpp-architectures.json` shows b9014 doesn't include `qwen4exp`. ODS auto-includes a `docker-compose.override.yml` if one exists (`installers/lib/compose-select.sh`), so the engine can be changed without editing ODS's files.
