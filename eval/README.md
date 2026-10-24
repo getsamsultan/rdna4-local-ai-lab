@@ -17,7 +17,8 @@
 
    ```bash
    python3 blind.py answers-*.jsonl     # writes blind-sheet.md, scores.csv, key.json
-   # read blind-sheet.md with RUBRIC.md open, fill in scores.csv — don't open key.json
+   python3 score_cli.py                 # one answer at a time: prompt, rubric, answer, then 0/1/2 (saves as you go)
+   # (or read blind-sheet.md with RUBRIC.md open and fill in scores.csv by hand) — don't open key.json
    python3 score.py answers-*.jsonl     # summary table
    ```
 
