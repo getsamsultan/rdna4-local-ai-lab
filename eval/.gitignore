@@ -3,3 +3,4 @@ blind-sheet.md
 scores.csv
 key.json
 scores-*.csv
+__pycache__/
