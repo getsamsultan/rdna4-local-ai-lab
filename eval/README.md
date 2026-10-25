@@ -39,3 +39,13 @@ python3 compare.py scores-claude.csv scores-qwen35.csv           # agreement, di
 ```
 
 A contestant model must never judge its own test. Report which judges were used and how often they agreed.
+
+## Round 2 design (planned, from community feedback on round 1)
+
+Round 1 ([Finding 04](../findings/04-qwen38-vs-80b-blind-eval.md)) used two AI judges and only one prompt with runnable code. Questions from readers on X pointed at the weak spots, so round 2 adds:
+
+1. **More executable checks.** SQL run against a real PostgreSQL with test data, PromQL rules checked with `promtool`, shell fixes run in a throwaway container, maths compared to a computed answer. Score those mechanically, not by a judge.
+2. **Style stripping before judging.** Remove emoji, headings, sign-offs and "let me know if…" lines, so formatting doesn't reveal which model wrote an answer.
+3. **Length-matched scoring.** Report answer length next to every score, and check whether the ranking holds when long answers are trimmed to a common budget, since LLM judges tend to favour longer answers.
+4. **A human blind pass.** At least one person scores the stripped sheet without the key; report human–AI agreement alongside judge–judge agreement.
+5. **Split reporting.** Executed / checkable / judgment prompts reported separately, not only as one total.
