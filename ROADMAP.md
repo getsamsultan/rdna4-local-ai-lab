@@ -58,6 +58,8 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 
 ## Learning
 
+Full exercise-by-exercise plan with rubrics: [CERTIFICATION.md](CERTIFICATION.md)
+
 - [ ] **AMD ROCm Certified: Associate** (ROCm fundamentals, HIP programming, single-GPU optimisation) · target: Oct 2026
     - Module 1 quiz (HIP basics, ROCm tools, CPU vs GPU): 8/11 on first attempt
     - [x] Module 2 quiz, passed 25 Oct 2026 (Instinct generations, memory hierarchy, MFMA, CDNA vs RDNA, MI300X topology). Revisit: MFMA, the MI300X hierarchy (package → XCD → CU → SIMD), host vs GPU-to-GPU links

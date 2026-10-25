@@ -78,6 +78,7 @@ bench-kit/  Runbook, power-monitoring guide and benchmark scripts
 docs/       Command reference (mapped to the ROCm certification) and upgrade notes
 repro/      One-command reproduction of Finding 02
 ROADMAP.md  What's done and what's next
+CERTIFICATION.md  ROCm certification prep: every topic as an exercise on this rig, with rubrics
 ```
 
 ## Next
