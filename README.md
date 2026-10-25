@@ -9,7 +9,7 @@ I'm Sam Sultan, an infrastructure and operations analyst in Sydney. This is my l
 ## The short version
 
 - **Smart or fast: pick per job.** In a blind test on my own work questions, a 177B model scored **27/30** against an 80B model's **18/30**, but the 80B answered **3.7× faster**. → [Finding 04](findings/04-qwen38-vs-80b-blind-eval.md)
-- **Updating the engine image was worth +13–19%.** Same model, same cards, same flags: llama.cpp b8763 → b11804 (and ROCm 7.2.0 → 7.2.1) took the 80B from 51.8–54.5 to 61.8 tokens/s. → [data](data/2026-10-25-engine-upgrade-aba.md)
+- **Update llama.cpp, not ROCm.** Same model, cards and flags: a newer llama.cpp image took the 80B from 54.5 to 65.3 tokens/s (~+20%). ROCm 7.2.1 → 10.1 on the same build changed nothing measurable (65.35 vs 65.74). → [engine](data/2026-10-25-engine-upgrade-aba.md) · [ROCm 10](data/2026-10-25-rocm-7.2.1-vs-10.1.md)
 - **One config line cost 61% of serving speed.** An APU-only setting (`HSA_ENABLE_SDMA=0`) in my own config, found by bisection. → [Finding 02](findings/02-hsa-enable-sdma.md)
 - **Electricity is cheap; the hardware isn't.** About A$0.71 (US$0.49) per million tokens generated, but ~17 years to pay back the hardware against renting the same model. Local AI is a control decision. → [Finding 03](findings/03-power-and-cost.md)
 - **The PCIe slot matters.** The chipset x4 slot costs ~12% alone, and the 80B runs 5% faster on two CPU-lane cards, though two cards can't hold its 128K context. → [Finding 01](findings/01-pcie-topology-and-layer-split.md)
@@ -31,8 +31,9 @@ llama.cpp with HIP and flash attention, ROCm 7.2 containers, `-ngl 99 -sm layer 
 |---|---|---|---|---|---|
 | Qwen3.8-Flash-Next 177B-A3B | UD-Q3_K_XL | 2 (x8 + x8) | b11804 | **37.5** | |
 | Qwen3.8-Flash-Next 177B-A3B | UD-Q3_K_XL | 3 | b11804 | 36.2 | 1,251 (pp512) |
-| Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 3 | b11804 | **61.8** | |
-| Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 3 | b8763 | 51.8 – 54.6 | 2,373 (pp4096) |
+| Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 3 | b11804, ROCm 7.2.1 | **65.3** | 2,414 (pp512) |
+| Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 3 | b11804, ROCm 10.1 | **65.7** | 2,414 (pp512) |
+| Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 3 | b8763, ROCm 7.2.0 | 54.5 | 2,373 (pp4096) |
 | Qwen3-Coder-Next 80B-A3B | UD-Q6_K | 2 (x8 + x8) | b8763 | 57.3 | |
 | Qwen3.6-35B-A3B | UD-Q4_K_M | 1 (x8) | b8763 | 75.4 | 2,292 (pp512) |
 | Qwen3.6-35B-A3B | UD-Q4_K_M | 1 (chipset x4) | b8763 | 66.2 | 2,271 (pp512) |
@@ -80,7 +81,7 @@ ROADMAP.md  What's done and what's next
 
 ## Next
 
-A minimal, offline-first ROCm serving stack of my own · R9700 vs MI300X on the same models · multi-user batching and cost per token · a physical slot swap to confirm Finding 01. Details in [ROADMAP.md](ROADMAP.md).
+A minimal, offline-first ROCm serving stack of my own (ROCm 10.1 ready) · R9700 vs MI300X on the same models · multi-user batching and cost per token · a physical slot swap to confirm Finding 01. Details in [ROADMAP.md](ROADMAP.md).
 
 **Sister repo:** [model-editing-lab](https://github.com/getsamsultan/model-editing-lab), on what it costs to change an open model's weights. **Upstream:** [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786), [#7787](https://github.com/Osmantic/ODS/issues/7787).
 

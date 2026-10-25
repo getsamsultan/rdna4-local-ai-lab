@@ -38,13 +38,14 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 ### Phase 7 — Engine and stack · 2026-10-24 → 25
 - [x] Same 80B, same cards: engine image b8763 / ROCm 7.2.0 → b11804 / ROCm 7.2.1 = **+13–19%** (51.8–54.5 → 61.8 t/s, A–B–A) ([data](data/2026-10-25-engine-upgrade-aba.md))
 - [x] Upgraded the third-party stack to its v3.0.0; it pins AMD to an older engine (b9014) that can't load Qwen3.8 and rejects engine overrides by design. Decision: **leave it and build my own minimal, offline-first ROCm stack** ([upgrade notes](docs/ods-upgrade-rdna4.md))
+- [x] **ROCm 7.2.1 vs 10.1.0**, same llama.cpp build: no measurable difference on the 80B (65.35 vs 65.74 t/s, pp512 identical) ([data](data/2026-10-25-rocm-7.2.1-vs-10.1.md))
 - [ ] Find why the old engine dropped from 54.7 to 51.8 t/s between 20 and 25 Oct: governor ruled out; restarting the host monitoring agent restored it; re-test in 24 h ([notes](data/2026-10-25-engine-upgrade-aba.md#open-question-the-547--518-drop-investigation-2026-10-25))
 
 ## Next
 
 - [ ] **Re-test the 35B through the stack** after the SDMA fix (earlier ~45 t/s vs 75 t/s benchmark — likely the same cause)
 - [ ] **Physical slot swap** to confirm the chipset-slot result is the slot, not the card
-- [ ] **ROCm 10 side-by-side** — same matrix, separate image
+- [x] **ROCm 10 side-by-side**: done 2026-10-25 for the 80B; Qwen3.8 next
 - [ ] **Multi-user serving** — how batching changes cost per token
 - [ ] **What does "local" send out?** Audit outbound traffic from the stack's containers
 - [ ] **PSU telemetry** — read the AX1600i (if Linux can see it) to measure power-supply losses, wall vs DC
