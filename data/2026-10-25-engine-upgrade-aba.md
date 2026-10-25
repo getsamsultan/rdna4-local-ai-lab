@@ -24,7 +24,7 @@ Identical flags for every run: `-ngl 99 -sm layer -fa 1 -ub 256 -p 0 -n 2048 -r 
 
 **What changed between the images:** the llama.cpp version (b8763 → b11804, over 3,000 builds apart), the ROCm point release (7.2.0 → 7.2.1), and the build itself (patched build from the old stack vs the official image). Most of the gain is very likely llama.cpp, but this test can't separate the three. Correction 2026-10-25: first published as "llama.cpp alone".
 
-Note: the old engine's 51.8 here was later traced to a host monitoring agent (see below); after restarting it, the old engine measured 54.3–54.5, so the like-for-like gain is closer to **+13%**.
+Note: this A–B–A ran while a host monitoring agent was in a slow state (see below), for **both** engines, so +19% is a fair same-conditions comparison. After restarting the agent, the old engine measured 54.3–54.5; the new engine hasn't been re-measured in that state yet. If the agent slowed only the old engine, the gain would be closer to **+13%**. To re-test: both engines, agent freshly restarted, A–B–A.
 
 Through a real server on the new engine (`llama-server`, 64K context, 1 slot, eval run of 2026-10-23), generation measured 64.4–64.7 t/s.
 
