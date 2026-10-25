@@ -9,7 +9,7 @@ I'm Sam Sultan, an infrastructure and operations analyst in Sydney. This is my l
 ## The short version
 
 - **Smart or fast: pick per job.** In a blind test on my own work questions, a 177B model scored **27/30** against an 80B model's **18/30**, but the 80B answered **3.7× faster**. → [Finding 04](findings/04-qwen38-vs-80b-blind-eval.md)
-- **Updating the engine was worth +19%.** Same model, same cards, same flags: llama.cpp b8763 → b11804 took the 80B from 51.8 to 61.8 tokens/s. → [data](data/2026-10-25-engine-upgrade-aba.md)
+- **Updating the engine image was worth +13–19%.** Same model, same cards, same flags: llama.cpp b8763 → b11804 (and ROCm 7.2.0 → 7.2.1) took the 80B from 51.8–54.5 to 61.8 tokens/s. → [data](data/2026-10-25-engine-upgrade-aba.md)
 - **One config line cost 61% of serving speed.** An APU-only setting (`HSA_ENABLE_SDMA=0`) in my own config, found by bisection. → [Finding 02](findings/02-hsa-enable-sdma.md)
 - **Electricity is cheap; the hardware isn't.** About A$0.71 (US$0.49) per million tokens generated, but ~17 years to pay back the hardware against renting the same model. Local AI is a control decision. → [Finding 03](findings/03-power-and-cost.md)
 - **The PCIe slot matters.** The chipset x4 slot costs ~12% alone, and the 80B runs 5% faster on two CPU-lane cards, though two cards can't hold its 128K context. → [Finding 01](findings/01-pcie-topology-and-layer-split.md)

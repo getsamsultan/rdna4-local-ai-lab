@@ -1,14 +1,14 @@
-# 2026-10-25 — Same model, same cards: old vs new llama.cpp (A–B–A)
+# 2026-10-25 — Same model, same cards: old vs new engine image (A–B–A)
 
-**Question:** how much of the 80B's speed comes from the engine version alone?
+**Question:** how much speed does updating the inference engine image give, with the model, cards and flags unchanged?
 
 **Model:** Qwen3-Coder-Next-UD-Q6_K.gguf (61.27 GiB), sha256 `b5d46e98cbc6867404ab264e00b10b0d45b565ff2bc5b23227924869e325d240`
 **GPUs:** 0,1,2 (PCIe 5.0 x8 + 5.0 x8 + chipset 4.0 x4), no other GPU workloads running
 
 | Engine | Image |
 |---|---|
-| old | `bench-rocm72-patched:b8763` (llama.cpp b8763, ROCm 7.2; built from the stack's own build stage, see Finding 01) |
-| new | `ghcr.io/ggml-org/llama.cpp:full-rocm@sha256:c3bd46248ccb95308c017d168c1ff5bf5796e7cb2ba62a4d24537f62701ae68f` (build 11804, commit c7fc50941) |
+| old | `bench-rocm72-patched:b8763`: llama.cpp b8763 with the old stack's source patches, **ROCm 7.2.0**, built from that stack's build stage (see Finding 01) |
+| new | `ghcr.io/ggml-org/llama.cpp:full-rocm@sha256:c3bd46248ccb95308c017d168c1ff5bf5796e7cb2ba62a4d24537f62701ae68f`: official llama.cpp build 11804 (commit c7fc50941), **ROCm 7.2.1** |
 
 Identical flags for every run: `-ngl 99 -sm layer -fa 1 -ub 256 -p 0 -n 2048 -r 5`, run in A–B–A order (old, new, old).
 
@@ -20,7 +20,11 @@ Identical flags for every run: `-ngl 99 -sm layer -fa 1 -ub 256 -p 0 -n 2048 -r 
 | 2 | **new (b11804)** | **61.81 ± 0.09** |
 | 3 | old (b8763) | 51.84 ± 0.01 |
 
-**The newer engine alone is +19.3% faster** (61.81 vs 51.83). The two old-engine runs agree within 0.02 t/s, so there was no drift during the session.
+**The newer engine image is +19.3% faster** (61.81 vs 51.83). The two old-engine runs agree within 0.02 t/s, so there was no drift during the session.
+
+**What changed between the images:** the llama.cpp version (b8763 → b11804, over 3,000 builds apart), the ROCm point release (7.2.0 → 7.2.1), and the build itself (patched build from the old stack vs the official image). Most of the gain is very likely llama.cpp, but this test can't separate the three. Correction 2026-10-25: first published as "llama.cpp alone".
+
+Note: the old engine's 51.8 here was later traced to a host monitoring agent (see below); after restarting it, the old engine measured 54.3–54.5, so the like-for-like gain is closer to **+13%**.
 
 Through a real server on the new engine (`llama-server`, 64K context, 1 slot, eval run of 2026-10-23), generation measured 64.4–64.7 t/s.
 
