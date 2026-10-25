@@ -38,7 +38,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 ### Phase 7 — Engine and stack · 2026-10-24 → 25
 - [x] Same 80B, same cards: llama.cpp b8763 → b11804 = **+19%** (51.8 → 61.8 t/s, A–B–A) ([data](data/2026-10-25-engine-upgrade-aba.md))
 - [x] Upgraded the third-party stack to its v3.0.0; it pins AMD to an older engine (b9014) that can't load Qwen3.8 and rejects engine overrides by design. Decision: **leave it and build my own minimal, offline-first ROCm stack** ([upgrade notes](docs/ods-upgrade-rdna4.md))
-- [ ] Find why the old engine dropped from 54.7 to 51.8 t/s between 20 and 25 Oct (provenance diff)
+- [ ] Find why the old engine dropped from 54.7 to 51.8 t/s between 20 and 25 Oct: governor ruled out; restarting the host monitoring agent restored it; re-test in 24 h ([notes](data/2026-10-25-engine-upgrade-aba.md#open-question-the-547--518-drop-investigation-2026-10-25))
 
 ## Next
 

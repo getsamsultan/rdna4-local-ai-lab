@@ -24,6 +24,26 @@ Identical flags for every run: `-ngl 99 -sm layer -fa 1 -ub 256 -p 0 -n 2048 -r 
 
 Through a real server on the new engine (`llama-server`, 64K context, 1 slot, eval run of 2026-10-23), generation measured 64.4–64.7 t/s.
 
-## Open question
+## Open question: the 54.7 → 51.8 drop (investigation, 2026-10-25)
 
-The old engine measured **54.65** with the same image and flags on 2026-10-20, and **51.8** today: about 5% slower. Today's comparison is valid (same session, A–B–A), but something on the host changed in between, possibly the stack upgrade, CPU governor or ambient temperature. To check with `bench-kit/scripts/provenance.sh`.
+The old engine measured **54.65** with the same image and flags on 2026-10-20, and **51.8** on the morning of the 25th. Today's old-vs-new comparison is unaffected (same session, A–B–A). Investigation so far, all with the old engine, 3 cards, tg2048, `-r 5`:
+
+**CPU governor: ruled out.**
+
+| Order | Governor | tg2048 |
+|---|---|---|
+| 1 | powersave | 51.73 ± 0.04 |
+| 2 | performance | 51.87 ± 0.05 |
+| 3 | powersave | 51.63 ± 0.02 |
+
+**Packages since the 20th:** no kernel, GPU firmware, amdgpu or ROCm changes. Mesa was upgraded (not used by the ROCm containers). A host monitoring agent (Netdata, nightly build with eBPF, perf and apps plugins) auto-upgrades daily. GPU power caps 300 W on all three cards.
+
+**Host monitoring agent:**
+
+| Order | Netdata | tg2048 |
+|---|---|---|
+| 1 | running (long-lived, since before today) | 51.69 ± 0.08 |
+| 2 | stopped | 54.47 ± 0.05 |
+| 3 | **freshly restarted** | 54.31 ± 0.02 |
+
+The A–B–A did its job: run 3 shows Netdata *running* isn't the cost. **Restarting it restored ~5%.** Working hypothesis: something in the long-running agent built up (a plugin spinning, or accumulated tracing probes). Next: leave it running, re-measure in 24 h, and capture per-process CPU (`ps -eo pid,etime,%cpu,rss,comm --sort=-%cpu`) when slow vs fast. Not a finding until it reproduces.
