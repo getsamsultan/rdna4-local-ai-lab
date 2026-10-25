@@ -49,3 +49,4 @@ Round 1 ([Finding 04](../findings/04-qwen38-vs-80b-blind-eval.md)) used two AI j
 3. **Length-matched scoring.** Report answer length next to every score, and check whether the ranking holds when long answers are trimmed to a common budget, since LLM judges tend to favour longer answers.
 4. **A human blind pass.** At least one person scores the stripped sheet without the key; report human–AI agreement alongside judge–judge agreement.
 5. **Split reporting.** Executed / checkable / judgment prompts reported separately, not only as one total.
+6. **Every judge on every set.** Both AI judges (and the human pass) score both the original and the length-matched sheets. Report each judge's totals and judge-vs-judge agreement per set. In round 1 the judges differed by 2 points on a 3–5 point prose gap, so the judge is a variable to measure, not a constant. A result that appears with only one judge gets reported as exactly that.
