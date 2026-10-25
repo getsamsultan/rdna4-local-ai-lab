@@ -51,6 +51,18 @@ Asked about a ROCm variable that doesn't exist (`HSA_ENABLE_SDMA_TURBO`):
 - **Qwen3.8 (medium reasoning) as the default** for security, design and debugging questions.
 - **The 80B when speed matters**: quick code, drafts, anything interactive.
 
+## Judges
+
+| | Judge 1 | Judge 2 |
+|---|---|---|
+| Model | Claude, configured as `claude-opus-5-5` (Anthropic) | Qwen3.6-35B-A3B, `Qwen3.6-35B-A3B-UD-Q4_K_M.gguf` |
+| Where it ran | Claude chat session | Locally on one R9700 (GPU2), llama.cpp build 11804, temperature 0 |
+| How it judged | Read every answer against the rubric; ran each parser answer's own tests; recomputed the maths | Rubric-only, via [`eval/judge.py`](../eval/judge.py), one call per answer |
+| Saw the key? | No | No |
+| Scores and reasons | [`scores-claude.csv`](../data/eval-2026-10-23/scores-claude.csv) | [`scores-qwen35.csv`](../data/eval-2026-10-23/scores-qwen35.csv) |
+
+Neither judge is a contestant. Final interpretation, and any disputed calls, are mine.
+
 ## Caveats
 
 - 15 prompts, one attempt each: a signal, not a leaderboard.
