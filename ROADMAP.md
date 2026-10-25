@@ -43,6 +43,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 
 ## Next
 
+- [ ] **ROCm vs Vulkan** (Sunday 1 Nov): same llama.cpp build (11804), same 80B Q6 and Qwen3.8, 3× R9700, A–B–A; Vulkan device indices checked first so the iGPU is excluded
 - [ ] **Blind eval round 2** (Sunday 1 Nov): more executable checks, style stripping, length-matched scoring, a human blind pass, split reporting → [design](eval/README.md#round-2-design-planned-from-community-feedback-on-round-1)
 
 - [ ] **Re-test the 35B through the stack** after the SDMA fix (earlier ~45 t/s vs 75 t/s benchmark — likely the same cause)
