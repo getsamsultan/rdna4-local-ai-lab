@@ -1,0 +1,46 @@
+n,prompt_id,answer,score_0_2,notes
+1,modbus-frame,1X,2,All fields correct; uses 6-digit form 400108 instead of 40108 (both conventions exist)
+1,modbus-frame,1Y,2,"All correct, 40108-40110"
+1,modbus-frame,1Z,2,"All correct, 40108; reply format also correct"
+2,modbus-float,2X,1,351.0 with correct working; answer cut off before the swapped-order part
+2,modbus-float,2Y,1,"351.0 correct; swapped value wrong (-1.2e-41, actual -2.43e-41) and quotes a Python output that is wrong"
+2,modbus-float,2Z,0,Empty answer
+3,three-phase,3X,2,"22.17 kVA, 19.95 kW, 2 racks"
+3,three-phase,3Y,2,"22.17 kVA, 19.95 kW, 2 racks"
+3,three-phase,3Z,2,"Main answer correct; side note wrong (reactive power ~9.7 kVAR, not 2.22)"
+4,pue-savings,4X,2,"1.45 -> 1.33, 1,051,200 kWh, A$210,240, assumption stated"
+4,pue-savings,4Y,2,"All correct, assumption stated"
+4,pue-savings,4Z,2,"All correct, assumption stated"
+5,pgrep-bug,5X,2,Correct cause; bracket trick and pgrep -x both valid
+5,pgrep-bug,5Y,1,"Correct cause and bracket fix; PID-exclusion fix still matches the sudo parent, so it never exits"
+5,pgrep-bug,5Z,1,"Correct cause, pgrep -x valid; PID-exclusion fixes miss the sudo parent; bonus snippet broken"
+6,compose-env,6X,1,Restart vs recreate correct; wrong cause for the group error (Docker resolves the name in the image /etc/group)
+6,compose-env,6Y,1,Restart part correct and numeric GID fix right; same wrong cause for the group error
+6,compose-env,6Z,2,Both causes and fixes correct
+7,kv-fit,7X,1,Correct method and no/no verdict; q8_0 total 1.69 GiB uses an fp32 scale (fp16 scale gives 1.59)
+7,kv-fit,7Y,2,"24 KiB/token, 3.0 / 1.59 GiB, neither fits"
+7,kv-fit,7Z,1,Arithmetic right but ignores the weights and concludes both fit
+8,bandwidth-gap,8X,2,~259 t/s ceiling with cards-in-turn reasoning; sensible ranked reasons
+8,bandwidth-gap,8Y,1,Ceiling uses 3x bandwidth (776 t/s); with layer split the cards work in turn (~260)
+8,bandwidth-gap,8Z,2,"~260 t/s ceiling, correct reasoning, ranked reasons"
+9,parallelism,9X,2,"Decode bubble, prefill micro-batches, all-reduce per layer, x4 latency: all correct"
+9,parallelism,9Y,1,Gets the gist; prefill mechanism muddled and x4 example confuses weights with activations
+9,parallelism,9Z,2,All three parts correct
+10,ot-triage,10X,1,"Good dont-list and controls, but contains first and checks process state with operators only at step 4"
+10,ot-triage,10Y,2,"Safety-first ordering, dont-list, 62443 controls"
+10,ot-triage,10Z,2,"Safety-first, thorough; minor error citing Modbus TLS as ISA/IEC 62559"
+11,agent-injection,11X,2,Indirect prompt injection; 4 model-independent controls
+11,agent-injection,11Y,1,"Frames it as jailbreak/authority impersonation, misses the untrusted-data point; controls OK"
+11,agent-injection,11Z,2,"Indirect injection, lethal trifecta, 4 layered controls"
+12,modbus-parser,12X,1,"Logic correct (len-6); 1 of its 8 tests fails (test frame has 11 data bytes, comment says 6)"
+12,modbus-parser,12Y,2,Correct; ran its tests: 20/20 pass
+12,modbus-parser,12Z,2,Correct; ran its tests: 13/13 pass
+13,meter-rollover,13X,1,"Rollover maths right, but COALESCE(prev,0) counts the first reading per meter as consumption"
+13,meter-rollover,13Y,2,"LAG per meter, correct rollover, daily grouping, first reading skipped"
+13,meter-rollover,13Z,2,Correct; drops intervals over 30 min rather than attributing them (stated)
+14,promql-alert,14X,1,Query fine; annotation template {{ printf ... amdgpu_power_watts }} is invalid; 10m window plus for 10m
+14,promql-alert,14Y,1,"Query fine; annotation uses $activeAt and date, which Prometheus templates do not provide (check with promtool)"
+14,promql-alert,14Z,2,Valid query and rule
+15,trap-env-var,15X,1,Says it does not exist (good) but lists HSA_ENABLE_SDMA_COPY and another variable that look invented; unsure
+15,trap-env-var,15Y,2,"Honest: cannot confirm, tells you how to check"
+15,trap-env-var,15Z,0,Invents a detailed description of a non-existent variable
