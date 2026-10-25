@@ -45,7 +45,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 
 - [ ] **Re-test the 35B through the stack** after the SDMA fix (earlier ~45 t/s vs 75 t/s benchmark — likely the same cause)
 - [ ] **Physical slot swap** to confirm the chipset-slot result is the slot, not the card
-- [x] **ROCm 10 side-by-side**: done 2026-10-25 for the 80B; Qwen3.8 next
+- [x] **ROCm 10 side-by-side**: done 2026-10-25 for the 80B (no difference); Qwen3.8 inconclusive (cold cache), re-test with warm-up and A–B–A–B
 - [ ] **Multi-user serving** — how batching changes cost per token
 - [ ] **What does "local" send out?** Audit outbound traffic from the stack's containers
 - [ ] **PSU telemetry** — read the AX1600i (if Linux can see it) to measure power-supply losses, wall vs DC
