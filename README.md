@@ -12,6 +12,7 @@ I'm Sam Sultan, an infrastructure and operations analyst in Sydney. I built a th
 
 | | Finding | Detail |
 |---|---|---|
+| 🧠 | **Blind eval: the 177B beats the 80B by 5–9 points out of 30, at a quarter of the speed** | 15 prompts from my own work, two AI judges (69% agreement), code actually run. Qwen3.8 27–28/30 vs the 80B 18–23/30; the 80B answers ~3.7× faster. → [Finding 04](findings/04-qwen38-vs-80b-blind-eval.md) |
 | 🔧 | **One config line was costing 61% of generation speed** | `HSA_ENABLE_SDMA=0`, a Strix Halo (APU) setting, cut an 80B model from 54.3 to 21.0 tokens/s on discrete RDNA4 cards. Found by bisection and fixed. The setting turned out to be a local addition in my own config, not the project's (see the correction in the finding). → [Finding 02](findings/02-hsa-enable-sdma.md) |
 | ⚡ | **Electricity: ~A$0.71 (US$0.49) per million tokens generated, ~A$0.03 (US$0.02) per million read** | Measured at the wall: 80 W idle, 425–440 W generating, up to 886 W reading long prompts. → [Finding 03](findings/03-power-and-cost.md) |
 | ☁️ | **On total cost, the cloud wins** | Against renting the same model, ~A$13k of hardware takes ~17 years of nonstop generation to pay back. Against a frontier-lab small model, ~1.2 years. Local AI is a control decision, not a cheap-tokens decision. → [Finding 03](findings/03-power-and-cost.md) |
