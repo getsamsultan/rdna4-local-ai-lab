@@ -34,6 +34,21 @@ Quizzes: Module 1 8/11 (first attempt) · Module 2 passed 25 Oct 2026
 - [ ] **E6 Air-gapped operation.** Rebuild the whole stack offline from a local mirror. *Done when:* the egress test passes and the offline rebuild works.
 - [ ] **Gate:** E1–E6 written up as one capstone.
 
+## Beyond the exams: the kernel track
+
+Fast inference engines win with hand-tuned GPU kernels for one chip. This track goes from system-level tuning down to tuning a real kernel on RDNA4.
+
+- [x] **K0 System-level tuning.** Settings, engine versions, slots, ROCm versions, A–B–A. → [Finding 02](findings/02-hsa-enable-sdma.md) (61%), [engine](data/2026-10-25-engine-upgrade-aba.md) (~+20%), [ROCm 10](data/2026-10-25-rocm-7.2.1-vs-10.1.md) (no gain)
+- [ ] **K1 Read a real kernel.** llama.cpp's HIP matrix-multiply and attention code for gfx1201. *Done when:* a plain-English note on how one kernel maps threads, waves and memory. → `hip-lab/k1-reading-notes.md`
+- [ ] **K2 Find the hot kernel.** `rocprofv3` on one token of the 80B and of Qwen3.8 (builds on A6). *Done when:* top kernels by time for each model, and why they differ. → a finding
+- [ ] **K3 Port a CUDA kernel.** `hipify` a small open-source CUDA kernel, build for gfx1201. *Done when:* correct output and a timing vs a simple baseline. → `hip-lab/k3-hipify/`
+- [ ] **K4 Write a Triton kernel.** One fused kernel (e.g. RMSNorm or softmax) in Triton on ROCm. *Done when:* correct, with its speed measured against the library version. → `hip-lab/k4-triton/`
+- [ ] **K5 Use AMD's tuned libraries.** hipBLASLt and Composable Kernel on the R9700; AITER on MI300X via cloud credits. *Done when:* one matrix shape tuned, before/after numbers. → `hip-lab/k5-libraries/`
+- [ ] **K6 Tune one llama.cpp kernel on gfx1201.** The hottest kernel from K2; change one thing (tile size, waves per block, memory layout); A–B–A on both models. *Done when:* a measured gain, correctness checked with perplexity. → a finding + a pull request to llama.cpp
+- [ ] **K7 Low-precision formats.** MXFP4 on CDNA4 (MI350-class) via cloud credits vs 4-bit GGUFs on RDNA4. *Done when:* speed and quality at each precision. → a finding
+
+**The goal is K6:** a measured speed-up to a real kernel on RDNA4, merged upstream.
+
 ---
 
 Move on when the rubric is met, not by the calendar. Exam topics for Professional and Expert will be checked against AMD's published outlines when they open.
