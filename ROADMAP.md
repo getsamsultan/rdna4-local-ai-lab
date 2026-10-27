@@ -43,6 +43,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 
 ## Next
 
+- [ ] **What does system RAM do for us?** (Sunday 1 Nov) Before spending on a Threadripper Pro / 8-channel board: on Qwen3.8 177B (GPUs 0,1), move experts from VRAM to system RAM step by step with `--n-cpu-moe` (0 → 6 → 12 → 24 → 0 again) and plot generation and prompt speed against GB in RAM. Record the host's measured memory bandwidth and free RAM alongside. **Decision rule:** if speed collapses as experts move to RAM, memory bandwidth is the bottleneck and more channels would pay; if it barely moves, don't buy.
 - [ ] **ROCm vs Vulkan** (Sunday 1 Nov): same llama.cpp build (11804), same 80B Q6 and Qwen3.8, 3× R9700, A–B–A; Vulkan device indices checked first so the iGPU is excluded
 - [ ] **Blind eval round 2** (Sunday 1 Nov): more executable checks, style stripping, length-matched scoring, a human blind pass, split reporting → [design](eval/README.md#round-2-design-planned-from-community-feedback-on-round-1)
 
