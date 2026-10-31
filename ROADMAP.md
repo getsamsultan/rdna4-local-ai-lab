@@ -41,7 +41,8 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [x] Same 80B, same cards: engine image b8763 / ROCm 7.2.0 → b11804 / ROCm 7.2.1 = **+13–19%** (51.8–54.5 → 61.8 t/s, A–B–A) ([data](data/2026-10-25-engine-upgrade-aba.md))
 - [x] Upgraded the third-party stack to its v3.0.0; it pins AMD to an older engine (b9014) that can't load Qwen3.8 and rejects engine overrides by design. Decision: **leave it and build my own minimal, offline-first ROCm stack** ([upgrade notes](docs/ods-upgrade-rdna4.md))
 - [x] **ROCm 7.2.1 vs 10.1.0**, same llama.cpp build: no difference on the 80B; Qwen3.8 2.7–3.9% slower on 10.1 ([data](data/2026-10-25-rocm-7.2.1-vs-10.1.md))
-- [ ] Find why the old engine dropped from 54.7 to 51.8 t/s between 20 and 25 Oct: governor ruled out; restarting the host monitoring agent restored it; re-test in 24 h ([notes](data/2026-10-25-engine-upgrade-aba.md#open-question-the-547--518-drop-investigation-2026-10-25))
+- [x] Find why the old engine dropped from 54.7 to 51.8 t/s: **the monitoring agent as started at boot costs ~5% of generation, a restart fixes it.** Reproduced 31 Oct on build 11804 (61.86 → 65.27 → 65.34). Not about uptime (slow after 43 min). Which plugin: next ([data](data/2026-10-31-netdata-aba.md))
+- [ ] Which Netdata plugin costs the 5%: plugins off one at a time, live `pidstat` during a slow run, boot test ([plan](data/2026-10-31-netdata-aba.md#next))
 
 ## Next
 

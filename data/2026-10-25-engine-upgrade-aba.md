@@ -52,4 +52,6 @@ The old engine measured **54.65** with the same image and flags on 2026-10-20, a
 
 The A–B–A did its job: run 3 shows Netdata *running* isn't the cost. **Restarting it restored ~5%.** Working hypothesis: something in the long-running agent built up (a plugin spinning, or accumulated tracing probes). Next: leave it running, re-measure in 24 h, and capture per-process CPU (`ps -eo pid,etime,%cpu,rss,comm --sort=-%cpu`) when slow vs fast. Not a finding until it reproduces.
 
+**Update (2026-10-31): reproduced** on build 11804 (−5.3%), but the agent was only 43 minutes old when slow, so the "builds up over time" guess above is wrong. See [the re-test](2026-10-31-netdata-aba.md).
+
 **Update (later on 2026-10-25):** with the agent freshly restarted, a build-11804 image measured 65.07–65.35 t/s against the old image's 54.31–54.47, so the like-for-like gain is **~+20%** and the +13% bound above no longer applies. See [ROCm 7.2.1 vs 10.1](2026-10-25-rocm-7.2.1-vs-10.1.md).
