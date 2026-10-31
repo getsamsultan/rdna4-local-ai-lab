@@ -33,6 +33,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [x] Qwen3.8-Flash-Next UD-Q3_K_XL (83.8 GiB) loads on three cards with build 11804: 57.7 GiB on GPUs, 27.5 GiB n-gram table in system RAM
 - [x] First numbers: 1,251 t/s prompt, 36 t/s generation; two cards 4% faster (A–B–A) ([data](data/2026-10-23-qwen38-flash-next-first-run.md))
 - [x] Blind eval vs the 80B: 177B wins on quality (27–28 vs 18–23 of 30), 80B ~3.7× faster → [Finding 04](findings/04-qwen38-vs-80b-blind-eval.md)
+- [x] Experts in system RAM (`--n-cpu-moe` 0/6/12/24, A–B–A): −13/−21/−31% generation for 6.7/12.9/25.4 GiB VRAM freed; SMT threads halve generation; op offload +25% prompt ([data](data/2026-10-31-qwen38-system-ram-sweep.md)) · 2026-10-31
 - [ ] Why generation is slower than the 80B; context limit on two cards; MTP speculative decoding
 
 ### Phase 7 — Engine and stack · 2026-10-24 → 25
