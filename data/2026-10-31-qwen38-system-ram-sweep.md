@@ -82,7 +82,7 @@ Same 2048-token prompt, only the micro-batch changes (`-b 2048 -p 2048 -n 0 -r 3
 A runs agree within 0.1%, B runs within 0.3%.
 
 - **`-ub 2048` is +59% prompt speed with experts in RAM.** At `-ub 512` the CPU-resident experts are sent to the GPU 4 times for a 2048-token prompt; at 2048, once. So prompt reading here is dominated by that per-micro-batch copy.
-- **Same puzzle, second method.** Saving 3 copies saves 0.88 s, so one copy of 12 layers of experts (12.93 GiB) takes ~0.29 s, which is **~47 GB/s**. That matches the section 4 estimate and is still above what PCIe 5.0 x8 carries. Either fewer bytes go over the link than the full experts, or something overlaps with the copies.
+- **Same puzzle, second method.** Saving 3 copies saves 0.88 s, so one copy of 12 layers of experts (12.93 GiB) takes ~0.29 s, which is **~47 GB/s**. Section 4 estimated ~38 GB/s at the same setting; both are above what PCIe 5.0 x8 carries. Either fewer bytes go over the link than the full experts, or something overlaps with the copies.
 - (A first attempt without a warm-up had the two `-ub 512` runs 13% apart, 760 vs 862. That run was thrown out.)
 
 ## What I'm doing with it
