@@ -34,6 +34,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [x] First numbers: 1,251 t/s prompt, 36 t/s generation; two cards 4% faster (A–B–A) ([data](data/2026-10-23-qwen38-flash-next-first-run.md))
 - [x] Blind eval vs the 80B: 177B wins on quality (27–28 vs 18–23 of 30), 80B ~3.7× faster → [Finding 04](findings/04-qwen38-vs-80b-blind-eval.md)
 - [x] Experts in system RAM (`--n-cpu-moe` 0/6/12/24, A–B–A): −13/−21/−31% generation for 6.7/12.9/25.4 GiB VRAM freed; SMT threads halve generation; op offload +25% prompt ([data](data/2026-10-31-qwen38-system-ram-sweep.md)) · 2026-10-31
+- [x] **ROCm vs Vulkan** (Qwen3.8, 2 cards, same commit, A–B–A–B ×2): Vulkan +4.3% generation, ROCm +23% prompt (pp2048), pp512 ~tie ([data](data/2026-10-31-rocm-vs-vulkan.md)) · 2026-10-31
 - [ ] Why generation is slower than the 80B; context limit on two cards; MTP speculative decoding
 
 ### Phase 7 — Engine and stack · 2026-10-24 → 25
@@ -45,7 +46,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 ## Next
 
 - [ ] **What does system RAM do for us?** (Sunday 1 Nov) Before spending on a Threadripper Pro / 8-channel board: on Qwen3.8 177B (GPUs 0,1), move experts from VRAM to system RAM step by step with `--n-cpu-moe` (0 → 6 → 12 → 24 → 0 again) and plot generation and prompt speed against GB in RAM. Record the host's measured memory bandwidth and free RAM alongside. **Decision rule:** if speed collapses as experts move to RAM, memory bandwidth is the bottleneck and more channels would pay; if it barely moves, don't buy.
-- [ ] **ROCm vs Vulkan** (Sunday 1 Nov): same llama.cpp build (11804), same 80B Q6 and Qwen3.8, 3× R9700, A–B–A; Vulkan device indices checked first so the iGPU is excluded
+- [ ] **ROCm vs Vulkan, part 2:** the 80B Q6 on 3× R9700, and Vulkan with experts in RAM (Qwen3.8 on 2 cards is [done](data/2026-10-31-rocm-vs-vulkan.md))
 - [ ] **Blind eval round 2** (Sunday 1 Nov): more executable checks, style stripping, length-matched scoring, a human blind pass, split reporting → [design](eval/README.md#round-2-design-planned-from-community-feedback-on-round-1)
 
 - [ ] **Re-test the 35B through the stack** after the SDMA fix (earlier ~45 t/s vs 75 t/s benchmark — likely the same cause)

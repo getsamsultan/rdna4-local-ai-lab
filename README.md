@@ -13,6 +13,7 @@ I'm Sam Sultan, an infrastructure and operations analyst in Sydney. This is my l
 - **One config line cost 61% of serving speed.** An APU-only setting (`HSA_ENABLE_SDMA=0`) in my own config, found by bisection. → [Finding 02](findings/02-hsa-enable-sdma.md)
 - **Electricity is cheap; the hardware isn't.** About A$0.71 (US$0.49) per million tokens generated, but ~17 years to pay back the hardware against renting the same model. Local AI is a control decision. → [Finding 03](findings/03-power-and-cost.md)
 - **Experts in system RAM cost less than you'd think, but don't use SMT threads.** Moving half the 177B's expert layers into RAM frees 25 GiB of VRAM for −31% generation (−61% prompt). 32 threads instead of 16 halves generation. → [data](data/2026-10-31-qwen38-system-ram-sweep.md)
+- **ROCm vs Vulkan is a split, not a knockout.** Same llama.cpp commit, same two cards, Qwen3.8 177B: Vulkan generates 4% faster, ROCm reads long prompts 23% faster, short prompts about a tie. → [data](data/2026-10-31-rocm-vs-vulkan.md)
 - **The PCIe slot matters.** The chipset x4 slot costs ~12% alone, and the 80B runs 5% faster on two CPU-lane cards, though two cards can't hold its 128K context. → [Finding 01](findings/01-pcie-topology-and-layer-split.md)
 
 ## Findings
