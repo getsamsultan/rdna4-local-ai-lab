@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ROCm vs Vulkan, same llama.cpp commit, same GPUs, A–B–A–B with llama-bench.
-# Usage: [MODELS_DIR=...] [FA=1] [VK_DEVICES=1,2] [HIP_DEVICES=0,1] ./rocm-vs-vulkan.sh <model file relative to MODELS_DIR>
+# Usage: [MODELS_DIR=...] [FA=1] [BENCH_ARGS="..."] [VK_DEVICES=1,2] [HIP_DEVICES=0,1] ./rocm-vs-vulkan.sh <model file relative to MODELS_DIR>
 #
 # VK_DEVICES must point at the SAME physical cards as HIP_DEVICES. Vulkan numbers devices
 # differently and also lists the iGPU. Check with --list-devices while another model is
@@ -15,7 +15,7 @@ VK_IMAGE="${VK_IMAGE:-lab-llama:b11804-vulkan}"
 HIP_DEVICES="${HIP_DEVICES:-0,1}"
 VK_DEVICES="${VK_DEVICES:-1,2}"
 FA="${FA:-1}"
-ARGS=(-ngl 99 -sm layer -fa "$FA" -p 512,2048 -n 128 -r 3 -o jsonl)
+read -ra ARGS <<<"${BENCH_ARGS:--ngl 99 -sm layer -fa $FA -p 512,2048 -n 128 -r 3} -o jsonl"
 OUT="$HOME/bench/rocm-vs-vulkan-$(date +%F-%H%M)"
 mkdir -p "$OUT"
 
