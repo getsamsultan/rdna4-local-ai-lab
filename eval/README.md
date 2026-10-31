@@ -50,3 +50,35 @@ Round 1 ([Finding 04](../findings/04-qwen38-vs-80b-blind-eval.md)) used two AI j
 4. **A human blind pass.** At least one person scores the stripped sheet without the key; report human–AI agreement alongside judge–judge agreement.
 5. **Split reporting.** Executed / checkable / judgment prompts reported separately, not only as one total.
 6. **Every judge on every set.** Both AI judges (and the human pass) score both the original and the length-matched sheets. Report each judge's totals and judge-vs-judge agreement per set. In round 1 the judges differed by 2 points on a 3–5 point prose gap, so the judge is a variable to measure, not a constant. A result that appears with only one judge gets reported as exactly that.
+
+### Round 2: how to run it
+
+```bash
+cd eval
+# 1. one shuffle, two sheets: style-stripped (blind-sheet.md) and length-matched (blind-sheet-short.md), same labels
+python3 blind.py --round2 answers-a.jsonl answers-b.jsonl answers-c.jsonl
+
+# 2. human blind pass on the stripped sheet (saves as you go, Ctrl+C to pause). Don't open key.json.
+python3 score_cli.py --scores scores-<you>.csv
+
+# 3. AI judges, each on both sheets (judge model must not be a contestant)
+python3 judge.py --url http://127.0.0.1:8098/v1 --name qwen35
+python3 judge.py --url http://127.0.0.1:8098/v1 --name qwen35-short --sheet blind-sheet-short.md
+
+# 4. mechanical checks (AFTER the human pass: the output names configs). Needs a scratch PostgreSQL and promtool.
+python3 execcheck.py --pg "host=/tmp port=5432 user=postgres" --promtool /path/to/promtool answers-*.jsonl
+
+# 5. report: split totals, machine vs judges on executed prompts, agreement, length effect
+python3 report.py --exec exec-results.csv scores-<you>.csv scores-qwen35.csv scores-qwen35-short.csv
+```
+
+What each part does:
+
+- **`prep.py`** strips emoji, markdown headings and bold, horizontal rules, and chatty opening/closing lines. Code blocks are untouched. Ticks and crosses become "yes"/"no" because they often carry the answer ("Fits? ❌"). Arrows and maths symbols are kept.
+- **Length matching** trims every answer to the shortest non-empty stripped answer for that prompt (word count). An empty answer stays empty and doesn't set the budget.
+- **`execcheck.py`**
+  - Prompt 12: imports the answer's `parse_mbap` and runs 7 hidden tests, plus the answer's own pytest tests.
+  - Prompt 13: runs the answer's SQL on PostgreSQL against 3 meters × 2 days of 15-minute data, with a rollover mid-morning, a rollover exactly at midnight and a 2-hour gap. It compares the result with computed daily totals. Attributing an interval to the later reading's day, dropping cross-midnight intervals and dropping intervals across the gap all count as correct. Attributing to the earlier reading's day scores 1.
+  - Prompt 14: `promtool check rules`, then promtool unit tests check that the rule fires for the card above 300 W only and that query (a) returns one 5-minute average per card. A rule that only fails on an annotation template scores 1 (Prometheus won't load it, but the logic is right).
+  - These three replace the judges' scores for those prompts. A key-number search for prompts 1–4, 7 and 8 is in the output as a weak cross-check only. LaTeX and tables hide numbers from it, so it isn't used in any total.
+- **`report.py`** prints totals split into executed / computed / judgment, the machine result next to each scorer's score on the executed prompts, scorer-vs-scorer agreement, median length per config, and full vs length-matched totals for each scorer that did both.

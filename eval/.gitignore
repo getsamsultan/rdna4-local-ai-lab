@@ -4,3 +4,6 @@ scores.csv
 key.json
 scores-*.csv
 __pycache__/
+blind-sheet-short.md
+lengths.csv
+exec-results.csv

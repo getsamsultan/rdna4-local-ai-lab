@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """LLM-as-judge: score every blind answer 0/1/2 against the rubric, via an OpenAI-compatible server.
 
-Usage: python3 judge.py --url http://127.0.0.1:8098/v1 --name qwen35
+Usage: python3 judge.py --url http://127.0.0.1:8098/v1 --name qwen35 [--sheet blind-sheet-short.md]
 Writes scores-<name>.csv (same layout as scores.csv). The judge never sees key.json.
+Round 2: run once per sheet, e.g. --name qwen35 and --name qwen35-short --sheet blind-sheet-short.md
 """
 import argparse, csv, json, re, urllib.request, pathlib
 from blindlib import here, prompts, rubric, answers
 ap = argparse.ArgumentParser()
 ap.add_argument("--url", required=True); ap.add_argument("--name", required=True)
+ap.add_argument("--sheet", default="blind-sheet.md")
 a = ap.parse_args()
-P, R, A = prompts(), rubric(), answers()
+P, R, A = prompts(), rubric(), answers(a.sheet)
 rows = list(csv.DictReader(open(here / "scores.csv")))
 SYS = ("You are a strict, fair grader. Score the ANSWER against the RUBRIC only. Ignore length, style and "
        "confidence; reward correctness. Reply with JSON only: {\"score\": 0|1|2, \"reason\": \"one sentence\"}.")
