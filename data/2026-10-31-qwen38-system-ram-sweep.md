@@ -67,16 +67,32 @@ By default llama.cpp can copy CPU-resident weights to the GPU for large batches 
 - My guess was that prompt reading is then limited by copying weights over PCIe. **The maths doesn't fit.** At `--n-cpu-moe 24`, prompt reading takes 0.57 s longer per 512 tokens than with everything on the GPUs. If that were all copying 25.4 GiB of experts, it would need ~47 GB/s, more than a PCIe 5.0 x8 link carries (~31.5 GB/s). At 12 it would need ~38 GB/s. So either not all of it is copied, or something else is going on. **Open question.**
 - It probably isn't selective copying saving the day: the model has 512 experts with 10 used per token, so one 512-token ubatch makes 5,120 picks per layer. With anything close to even routing that touches nearly every expert.
 - Asked on the llama.cpp Discussions: [ggml-org/llama.cpp#31450](https://github.com/ggml-org/llama.cpp/discussions/31450). I'll update this note with the answer.
-- Next test to separate the two: `--n-cpu-moe 12` with a larger micro-batch (`-ub 2048`). If prompt speed jumps, it's copy-bound; if it stays flat, it isn't.
+
+## 5. Bigger micro-batch (`-ub 2048`, `--n-cpu-moe 12`)
+
+Same 2048-token prompt, only the micro-batch changes (`-b 2048 -p 2048 -n 0 -r 3`). One discarded warm-up at `-ub 512`, then A–B–A–B:
+
+| Order | `-ub` | pp2048 (t/s) |
+|---|---|---|
+| 1 | 512 | 861.88 ± 4.90 |
+| 2 | 2048 | 1372.64 ± 13.95 |
+| 3 | 512 | 861.06 ± 3.50 |
+| 4 | 2048 | 1368.66 ± 13.81 |
+
+A runs agree within 0.1%, B runs within 0.3%.
+
+- **`-ub 2048` is +59% prompt speed with experts in RAM.** At `-ub 512` the CPU-resident experts are sent to the GPU 4 times for a 2048-token prompt; at 2048, once. So prompt reading here is dominated by that per-micro-batch copy.
+- **Same puzzle, second method.** Saving 3 copies saves 0.88 s, so one copy of 12 layers of experts (12.93 GiB) takes ~0.29 s, which is **~47 GB/s**. That matches the section 4 estimate and is still above what PCIe 5.0 x8 carries. Either fewer bytes go over the link than the full experts, or something overlaps with the copies.
+- (A first attempt without a warm-up had the two `-ub 512` runs 13% apart, 760 vs 862. That run was thrown out.)
 
 ## What I'm doing with it
 
 - `lab-llm` stays at `--n-cpu-moe 0`: the model fits, and GPU0 has almost no headroom at 64K context anyway (33.2 GB in use).
-- When a model *doesn't* fit, offloading experts is a reasonable trade for generation, much less so for long prompts.
+- When a model *doesn't* fit, offloading experts is a reasonable trade for generation, much less so for long prompts. Use a big `-ub` (2048) to win most of the prompt speed back.
 - Never set `-t` above the physical core count.
 
 ## Not yet done
 
 - CPU use per run was logged (`mpstat -P ALL 5`) but not analysed yet.
 - `-ts` rebalance to turn freed GPU0 memory into context.
-- The `-ub 2048` test above.
+- VRAM cost of `-ub 2048` (bigger compute buffer).
