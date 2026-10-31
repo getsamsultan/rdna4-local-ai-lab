@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Round 2 report: split totals, mechanical vs judged, judge agreement, length effect.
 
-Usage: python3 report.py --exec exec-results.csv scores-sam.csv scores-qwen35.csv scores-qwen35-short.csv ...
+Usage: python3 report.py --exec exec-results.csv [--truth sam] scores-sam.csv scores-qwen35.csv scores-qwen35-short.csv ...
   A score file whose name ends in "-short" is treated as a score of blind-sheet-short.md (length-matched).
 Needs key.json (and lengths.csv for the length table) next to this script. Prints markdown.
 
@@ -20,6 +20,7 @@ ap.add_argument("scores", nargs="+")
 ap.add_argument("--exec", dest="execf")
 ap.add_argument("--key", default=str(here / "key.json"))
 ap.add_argument("--lengths", default=str(here / "lengths.csv"))
+ap.add_argument("--truth", help="scorer treated as ground truth (the human pass) for the judge check")
 a = ap.parse_args()
 
 key = json.load(open(a.key))
@@ -69,6 +70,19 @@ for x, y in combinations(S, 2):
     if labs:
         ag = sum(S[x][l] == S[y][l] for l in labs)
         print(f"| {x} | {y} | {ag} ({100*ag/len(labs):.0f}%) | {len(labs)} |")
+
+if a.truth and a.truth in S:
+    print(f"\n## Judges checked against {a.truth} (pass = 2, fail = 0 or 1; non-executed prompts)\n")
+    print("Small sample: a sanity check of each judge, not a proper validation.\n")
+    print(f"| Judge | Agrees on {a.truth}'s passes | Agrees on {a.truth}'s fails |\n|---|---|---|")
+    T = S[a.truth]
+    for name in S:
+        if name == a.truth or name.endswith("-short"): continue
+        labs = [l for l in key if n_of(l) not in GROUPS["executed"] and T.get(l, "") != "" and S[name].get(l, "") != ""]
+        p = [l for l in labs if T[l] == "2"]; f = [l for l in labs if T[l] != "2"]
+        tp = sum(S[name][l] == "2" for l in p); tn = sum(S[name][l] != "2" for l in f)
+        pct = lambda x, y: f"{x}/{y} ({100*x/y:.0f}%)" if y else "n/a"
+        print(f"| {name} | {pct(tp, len(p))} | {pct(tn, len(f))} |")
 
 lp = pathlib.Path(a.lengths)
 if lp.exists():

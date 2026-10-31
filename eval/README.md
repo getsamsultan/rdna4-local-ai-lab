@@ -69,7 +69,7 @@ python3 judge.py --url http://127.0.0.1:8098/v1 --name qwen35-short --sheet blin
 python3 execcheck.py --pg "host=/tmp port=5432 user=postgres" --promtool /path/to/promtool answers-*.jsonl
 
 # 5. report: split totals, machine vs judges on executed prompts, agreement, length effect
-python3 report.py --exec exec-results.csv scores-<you>.csv scores-qwen35.csv scores-qwen35-short.csv
+python3 report.py --exec exec-results.csv --truth <you> scores-<you>.csv scores-qwen35.csv scores-qwen35-short.csv
 ```
 
 What each part does:
@@ -81,4 +81,4 @@ What each part does:
   - Prompt 13: runs the answer's SQL on PostgreSQL against 3 meters × 2 days of 15-minute data, with a rollover mid-morning, a rollover exactly at midnight and a 2-hour gap. It compares the result with computed daily totals. Attributing an interval to the later reading's day, dropping cross-midnight intervals and dropping intervals across the gap all count as correct. Attributing to the earlier reading's day scores 1.
   - Prompt 14: `promtool check rules`, then promtool unit tests check that the rule fires for the card above 300 W only and that query (a) returns one 5-minute average per card. A rule that only fails on an annotation template scores 1 (Prometheus won't load it, but the logic is right).
   - These three replace the judges' scores for those prompts. A key-number search for prompts 1–4, 7 and 8 is in the output as a weak cross-check only. LaTeX and tables hide numbers from it, so it isn't used in any total.
-- **`report.py`** prints totals split into executed / computed / judgment, the machine result next to each scorer's score on the executed prompts, scorer-vs-scorer agreement, median length per config, and full vs length-matched totals for each scorer that did both.
+- **`report.py`** prints totals split into executed / computed / judgment, the machine result next to each scorer's score on the executed prompts, scorer-vs-scorer agreement, median length per config, and full vs length-matched totals for each scorer that did both. With `--truth <you>` it also shows how often each judge agrees with the human on passes (2) and on fails (0/1), the judge check Hamel Husain recommends, on a sample too small to be a full validation.
