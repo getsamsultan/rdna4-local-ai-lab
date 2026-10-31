@@ -65,6 +65,8 @@ By default llama.cpp can copy CPU-resident weights to the GPU for large batches 
 
 - **Op offload is active and worth +25% prompt speed** with experts in RAM. Generation is unaffected. Keep the default.
 - My guess was that prompt reading is then limited by copying weights over PCIe. **The maths doesn't fit.** At `--n-cpu-moe 24`, prompt reading takes 0.57 s longer per 512 tokens than with everything on the GPUs. If that were all copying 25.4 GiB of experts, it would need ~47 GB/s, more than a PCIe 5.0 x8 link carries (~31.5 GB/s). At 12 it would need ~38 GB/s. So either not all of it is copied, or something else is going on. **Open question.**
+- It probably isn't selective copying saving the day: the model has 512 experts with 10 used per token, so one 512-token ubatch makes 5,120 picks per layer. With anything close to even routing that touches nearly every expert.
+- Asked on the llama.cpp Discussions: [ggml-org/llama.cpp#31450](https://github.com/ggml-org/llama.cpp/discussions/31450). I'll update this note with the answer.
 - Next test to separate the two: `--n-cpu-moe 12` with a larger micro-batch (`-ub 2048`). If prompt speed jumps, it's copy-bound; if it stays flat, it isn't.
 
 ## What I'm doing with it
