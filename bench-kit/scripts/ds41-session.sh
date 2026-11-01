@@ -3,12 +3,13 @@
 # until generation plateaus, then measured; disk I/O logged the whole time; eval answers collected at the end.
 # Usage: ./ds41-session.sh            (asks for sudo once, to restart the monitoring agent first)
 #        SKIP_EVAL=1 ./ds41-session.sh   (benchmarks only)
+#        REVIEW_DOC=~/review/design-doc.md ./ds41-session.sh   (also a design review of that doc, see eval/review.py)
 set -uo pipefail
 
 IMAGE="${IMAGE:-lab-llama:ds41-b72050d-rocm7.2.1}"
 MODELS_DIR="${MODELS_DIR:-$HOME/models}"
 MODEL="${MODEL:-ds41-iq1m/UD-IQ1_M/DeepSeek-V4.1-Flash-1017-UD-IQ1_M-00001-of-00005.gguf}"
-PORT=8098; CTX="${CTX:-16384}"
+PORT=8098; CTX="${CTX:-32768}"   # 32K so a ~9K-token document plus a long review fits
 REPO="$(cd "$(dirname "$0")/../.." && pwd)"
 OUT="$HOME/bench/ds41-session-$(date +%F-%H%M)"
 mkdir -p "$OUT"
@@ -89,6 +90,12 @@ if [ -z "${SKIP_EVAL:-}" ] && curl -sf "$URL/health" >/dev/null; then
   ( cd "$REPO/eval" && python3 run.py --url "$URL/v1" --label ds41-iq1m --max-tokens 8192 ) > "$OUT/eval-run.log" 2>&1
   cp "$REPO/eval/answers-ds41-iq1m.jsonl" "$OUT/" 2>/dev/null
   mark "eval: done ($(grep -c . "$OUT/answers-ds41-iq1m.jsonl" 2>/dev/null || echo 0) answers)"
+fi
+
+if [ -n "${REVIEW_DOC:-}" ] && [ -f "$REVIEW_DOC" ] && curl -sf "$URL/health" >/dev/null; then
+  mark "review: $(basename "$REVIEW_DOC")"
+  python3 "$REPO/eval/review.py" --url "$URL/v1" --label ds41-iq1m --doc "$REVIEW_DOC" --out-dir "$(dirname "$REVIEW_DOC")" \
+    > "$OUT/review-run.log" 2>&1 && mark "review: done" || mark "!! review failed, see review-run.log"
 fi
 
 # Summary
