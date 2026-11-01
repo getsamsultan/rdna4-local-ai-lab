@@ -22,7 +22,14 @@ for p in prompts:
     body.update(json.loads(a.extra))
     req = urllib.request.Request(a.url.rstrip("/") + "/chat/completions", json.dumps(body).encode(), {"Content-Type": "application/json"})
     t0 = time.time()
-    r = json.load(urllib.request.urlopen(req, timeout=3600))
+    try:
+        r = json.load(urllib.request.urlopen(req, timeout=3600))
+    except Exception as e:  # record the failure (scored 0 as an empty answer) and carry on with the next prompt
+        rec = {"n": p["n"], "id": p["id"], "label": a.label, "answer": "", "reasoning": "", "error": str(e)[:300],
+               "wall_s": round(time.time() - t0, 1), "completion_tokens": None, "gen_tps": None, "request_extra": json.loads(a.extra)}
+        out.write(json.dumps(rec) + "\n"); out.flush()
+        print(f"{p['n']:>2} {p['id']:<16} ERROR {rec['error'][:80]}")
+        continue
     msg = r["choices"][0]["message"]
     tim = r.get("timings", {})
     rec = {"n": p["n"], "id": p["id"], "label": a.label, "answer": msg.get("content", ""),
