@@ -3,23 +3,32 @@
 
 Usage: python3 review.py --url http://127.0.0.1:8098/v1 --label ds41-iq1m --doc design-doc.md [--out-dir DIR]
 Writes review-<label>.json (review text, reasoning, tokens, timings) and review-<label>.md (review text only).
-Send the SAME doc to every model you compare, then read the .md files without looking at which is which
+The brief fixes the output format and tells the model not to deny things newer than its training data.
+Send the SAME doc and brief to every model you compare, then read the .md files without looking at which is which
 (e.g. rename them A/B first). This is not part of the scored eval: there is no rubric, only your judgement.
 """
 import argparse, json, pathlib, time, urllib.request
 
 BRIEF = """You are reviewing an architecture document for a local AI system that will run on one person's workstation.
 
-Find the most important problems. For each problem give:
-1. Where (section name).
-2. What is wrong, missing or risky, in one or two sentences.
-3. Why it matters in practice.
-4. A concrete fix.
-5. Severity: high, medium or low.
+Find the most important problems: things that are wrong, missing, contradictory or risky in the design. Give at most 12, ranked by severity, high first.
 
-Rank problems by severity, high first. Give at most 12. Then, separately, list any factual or technical claims in the document that you think are wrong or that you cannot verify, and say why.
+Write each problem in exactly this format, with a blank line between problems:
 
-Rules: be specific to this document, not generic advice. No praise, no summary of the document, no preamble. If something is fine, don't mention it. Stay under 1,200 words.
+**<number>. <short title>**
+Where: <section name>
+Problem: <what is wrong, missing or risky, one or two sentences>
+Why it matters: <the practical consequence, one sentence>
+Fix: <a concrete change to the design>
+Severity: **High** | **Medium** | **Low**
+
+Then a section titled **Claims I could not verify**, one bullet each: the claim, and why you can't confirm it.
+
+Rules:
+- Be specific to this document. No generic advice, no praise, no summary, no preamble.
+- Versions, products, models and standards may be newer than your training data. If you don't recognise one, list it under "Claims I could not verify" as possibly newer than your knowledge. Never state that it does not exist.
+- Only call something wrong when you can show why from the document itself or from well-established facts.
+- Stay under 1,200 words.
 
 DOCUMENT:
 """
