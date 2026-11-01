@@ -43,6 +43,6 @@ Caveat: `ps` %CPU is the average over each process's whole life, so these snapsh
 
 ## Next
 
-- `perf record -a -g` for ~30 s while it's slow and again right after the restart, then compare where CPU time goes (suggested by @Fanfulladev on X). Plus live per-process CPU during a slow run (`pidstat -u 5`), not lifetime averages.
+- `perf record -a -g` for ~30 s while it's slow and again right after the restart, then compare where CPU time goes (suggested by Fanfulladev on X). Plus live per-process CPU during a slow run (`pidstat -u 5`), not lifetime averages.
 - Turn the plugins off one at a time (debugfs, ebpf, perf, apps, go.d), each with its own A–B–A, to find which one it is.
 - Boot test: reboot → bench → restart agent → bench, to confirm "started at boot" is the trigger and not just "started a while ago".
