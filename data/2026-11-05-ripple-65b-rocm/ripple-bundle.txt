@@ -1,0 +1,112 @@
+=== ripple.log
+2026-11-05T16:26:54+11:00 building lab-llama:ripple-pr31692-6414d5b0c-rocm7.2.1 from PR #31692 head 6414d5b0c
+2026-11-05T16:31:49+11:00 built lab-llama:ripple-pr31692-6414d5b0c-rocm7.2.1
+2026-11-05T16:31:49+11:00 stage build done; results in ~/bench/ripple-2026-11-05
+2026-11-05T19:57:56+11:00 converting BF16 safetensors -> GGUF
+2026-11-05T20:00:57+11:00 sliding-window key present: ricursive.attention.sliding_window ricursive.attention.sliding_window_pattern 
+2026-11-05T20:00:57+11:00 stage convert done; results in ~/bench/ripple-2026-11-05
+2026-11-05T20:05:05+11:00 quantising Q8_0
+2026-11-05T20:06:20+11:00 quantising Q6_K
+2026-11-05T20:08:36+11:00 hashing
+2026-11-05T20:11:31+11:00 stage quant done; results in ~/bench/ripple-2026-11-05
+2026-11-05T20:14:26+11:00 fetching wikitext-2 test set
+2026-11-05T20:14:28+11:00 perplexity, Q8_0, ctx 2048, 3 GPUs
+2026-11-05T20:14:45+11:00 no final estimate: check ppl-q8_0.log
+2026-11-05T20:14:45+11:00 compare: PR author reports BF16 PPL 3.01 (dataset/ctx not stated). Near ~3 = plausible. Far above (e.g. >5) = ROCm path likely broken.
+2026-11-05T20:14:45+11:00 stage ppl done; results in ~/bench/ripple-2026-11-05
+2026-11-05T20:17:36+11:00 perplexity, Q8_0, ctx 2048, 3 GPUs
+[1]7.1701,[2]8.9946,[3]9.2679,[4]8.6788,[5]8.6294,[6]7.4681,[7]7.2737,[8]7.1716,[9]7.6162,[10]7.6731,[11]7.5474,[12]7.6081,[13]7.7769,[14]7.9324,[15]8.0608,[16]8.2742,[17]8.2906,[18]8.2582,[19]8.0744,[20]8.1069,[21]8.1716,[22]8.2188,[23]8.1982,[24]8.2561,[25]8.2499,[26]8.4346,[27]8.5492,[28]8.5342,[29]8.4662,[30]8.3264,[31]8.1754,[32]8.0683,[33]8.0566,[34]8.0790,[35]8.1202,[36]8.0218,[37]7.9561,[38]7.8340,[39]7.7532,[40]7.7358,[41]7.8021,[42]7.9016,[43]8.0368,[44]8.1014,[45]8.1217,[46]8.1853,[47]8.2584,[48]8.2473,[49]8.2922,[50]8.2533,[51]8.2051,[52]8.1656,[53]8.1005,[54]8.0770,[55]8.0047,[56]7.9412,[57]7.9067,[58]7.8828,[59]7.9223,[60]7.9740,[61]8.0326,[62]8.0864,[63]8.0094,[64]8.0215,[65]7.9982,[66]7.9380,[67]7.9292,[68]7.9138,[69]7.9245,[70]7.9503,[71]7.9955,[72]8.0071,[73]7.9934,[74]8.0043,[75]8.0226,[76]8.0162,[77]8.0248,[78]8.0282,[79]8.0326,[80]7.9971,[81]7.9614,[82]7.9492,[83]7.9463,[84]7.9263,[85]7.9401,[86]7.9824,[87]7.9868,[88]7.9758,[89]8.0283,[90]8.0970,[91]8.1300,[92]8.1582,[93]8.1985,[94]8.1847,[95]8.2109,[96]8.2373,[97]8.2618,[98]8.2183,[99]8.2217,[100]8.2099,[101]8.2058,[102]8.2071,[103]8.1931,[104]8.2196,[105]8.2040,[106]8.1987,[107]8.1820,[108]8.1663,[109]8.1482,[110]8.1133,[111]8.1436,[112]8.1420,[113]8.1482,[114]8.1471,[115]8.1378,[116]8.1234,[117]8.1272,[118]8.1216,[119]8.1055,[120]8.0946,[121]8.0893,[122]8.1120,[123]8.1172,[124]8.1181,[125]8.1029,[126]8.1232,[127]8.1298,[128]8.1052,[129]8.0986,[130]8.1037,[131]8.1097,[132]8.1172,[133]8.0990,[134]8.0436,[135]8.0587,[136]8.1020,[137]8.1199,[138]8.1139,[139]8.1116,[140]8.1225,4.20.596.593 I Final estimate: PPL = 8.1264 +/- 0.05960
+2026-11-05T20:21:57+11:00 compare: PR author reports BF16 PPL 3.01 (dataset/ctx not stated). Near ~3 = plausible. Far above (e.g. >5) = ROCm path likely broken.
+2026-11-05T20:21:57+11:00 stage ppl done; results in ~/bench/ripple-2026-11-05
+=== image.txt
+lab-llama:ripple-pr31692-6414d5b0c-rocm7.2.1
+=== swa-key.txt
+ricursive.attention.sliding_window
+ricursive.attention.sliding_window_pattern
+=== gguf.sha256
+6b9789df3d17a90e84293c412b6e5a77aa70004e00cf3a6e331883826100d522  ripple-65b-bf16.gguf
+cd9999bb7e02784940e25160ea9ab2afba01035ad35129c38d23acb1a9ce3d40  ripple-65b-q6_k.gguf
+1e4e245f8013834c1c7be26a70dba0ed37c0bc0a88a8c5aef2ea37968d281d89  ripple-65b-q8_0.gguf
+=== hf-weights.sha256
+0701bedc60edbb370e128cdff50478f6676cacd674080c16cca122a8d4b06c72  model-00001-of-00016.safetensors
+f22cba23852fcfd5df22e54285952ec3803b7921461fc8e54629c586e1ab8a60  model-00002-of-00016.safetensors
+ed8cbb1946f546d32c96b569d30b700ca6936994025623d6c69c9e436b7caced  model-00003-of-00016.safetensors
+54281881efb8ab45301aa3d22e9501281e4c59bc69bd736ce08e8de5e09fae05  model-00004-of-00016.safetensors
+a78d9cac0b076eede2fda612704b43f9d21d6f27276ef1924656327c992a1c5c  model-00005-of-00016.safetensors
+cd281215be38ff363f13e6de47d20b062a4cfe288d7c2d98fc93c0a962d4e21a  model-00006-of-00016.safetensors
+384e1e3430c5972f33434269090c3dfe5b101649579950b9645fecc9739949be  model-00007-of-00016.safetensors
+d011f18e13bc7cdea10f9066681797051d4ae28fd4edb96f84abca264e9934eb  model-00008-of-00016.safetensors
+921d6e15e08f717dc5be562dd1ceb56a096fd9d3707f1f1d742d15625917daa1  model-00009-of-00016.safetensors
+31f3417c654d8db5596f811db381b75b732f2e11925d54a8dbb7ec3d25e3a086  model-00010-of-00016.safetensors
+6aa7575de621c2f74761a0ed4cf1d303395fbaec65f64e7c3dcd695230fedc14  model-00011-of-00016.safetensors
+882b853d96ed396346ab65bb4070bf489f7b7e2d3cb60457d6d785fe2e218272  model-00012-of-00016.safetensors
+75a1cd9a3688a8d2483232e45ebfc01fa7287accd52237c955ae11af3621e028  model-00013-of-00016.safetensors
+269b31e8abf1d73bb0dd158d30a4e0bacfaad1eaa7cbc442541cbce9443023bf  model-00014-of-00016.safetensors
+32b4c1bb53297f5e564bb327b2cd40318c7b672be04d94899c6c0eee37102c9b  model-00015-of-00016.safetensors
+f0a2571453449e5fe940cba3adb623ffc1d9b3d00a32a5d5f0a979e82bc39eeb  model-00016-of-00016.safetensors
+=== PR head commit
+6414d5b0c9e5895473036c90c2bd305ce4ceccc4
+=== ppl-q8_0.log (ROCm, tail)
+0.06.934.909 I cmn          init: llama threadpool init, n_threads = 16
+0.07.105.928 I 
+0.07.105.982 I system_info: n_threads = 16 (n_threads_batch = 16) / 32 | ROCm : NO_VMM = 1 | FA_QUANTS = q4_0-q4_0,q8_0-q8_0,f16-f16,bf16-bf16 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VBMI = 1 | AVX512_VNNI = 1 | AVX512_BF16 = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.07.105.997 I perplexity: tokenizing the input ..
+0.07.358.632 I perplexity: tokenization took 252.627 ms
+0.07.358.711 I perplexity: calculating perplexity over 141 chunks, n_ctx=2048, batch_size=2048, n_seq=1
+0.09.138.757 I perplexity: 1.78 seconds per pass - ETA 4.17 minutes
+[1]7.1701,[2]8.9946,[3]9.2679,[4]8.6788,[5]8.6294,[6]7.4681,[7]7.2737,[8]7.1716,[9]7.6162,[10]7.6731,[11]7.5474,[12]7.6081,[13]7.7769,[14]7.9324,[15]8.0608,[16]8.2742,[17]8.2906,[18]8.2582,[19]8.0744,[20]8.1069,[21]8.1716,[22]8.2188,[23]8.1982,[24]8.2561,[25]8.2499,[26]8.4346,[27]8.5492,[28]8.5342,[29]8.4662,[30]8.3264,[31]8.1754,[32]8.0683,[33]8.0566,[34]8.0790,[35]8.1202,[36]8.0218,[37]7.9561,[38]7.8340,[39]7.7532,[40]7.7358,[41]7.8021,[42]7.9016,[43]8.0368,[44]8.1014,[45]8.1217,[46]8.1853,[47]8.2584,[48]8.2473,[49]8.2922,[50]8.2533,[51]8.2051,[52]8.1656,[53]8.1005,[54]8.0770,[55]8.0047,[56]7.9412,[57]7.9067,[58]7.8828,[59]7.9223,[60]7.9740,[61]8.0326,[62]8.0864,[63]8.0094,[64]8.0215,[65]7.9982,[66]7.9380,[67]7.9292,[68]7.9138,[69]7.9245,[70]7.9503,[71]7.9955,[72]8.0071,[73]7.9934,[74]8.0043,[75]8.0226,[76]8.0162,[77]8.0248,[78]8.0282,[79]8.0326,[80]7.9971,[81]7.9614,[82]7.9492,[83]7.9463,[84]7.9263,[85]7.9401,[86]7.9824,[87]7.9868,[88]7.9758,[89]8.0283,[90]8.0970,[91]8.1300,[92]8.1582,[93]8.1985,[94]8.1847,[95]8.2109,[96]8.2373,[97]8.2618,[98]8.2183,[99]8.2217,[100]8.2099,[101]8.2058,[102]8.2071,[103]8.1931,[104]8.2196,[105]8.2040,[106]8.1987,[107]8.1820,[108]8.1663,[109]8.1482,[110]8.1133,[111]8.1436,[112]8.1420,[113]8.1482,[114]8.1471,[115]8.1378,[116]8.1234,[117]8.1272,[118]8.1216,[119]8.1055,[120]8.0946,[121]8.0893,[122]8.1120,[123]8.1172,[124]8.1181,[125]8.1029,[126]8.1232,[127]8.1298,[128]8.1052,[129]8.0986,[130]8.1037,[131]8.1097,[132]8.1172,[133]8.0990,[134]8.0436,[135]8.0587,[136]8.1020,[137]8.1199,[138]8.1139,[139]8.1116,[140]8.1225,4.20.596.593 I Final estimate: PPL = 8.1264 +/- 0.05960
+[141]8.1264,
+
+=== ppl-q8_0-cpu20.log (CPU, tail)
+0.00.159.154 E ggml_cuda_init: failed to initialize ROCm: no ROCm-capable device is detected
+0.17.163.735 I cmn          init: llama threadpool init, n_threads = 16
+0.19.038.421 I 
+0.19.041.606 I system_info: n_threads = 16 (n_threads_batch = 16) / 32 | ROCm : NO_VMM = 1 | FA_QUANTS = q4_0-q4_0,q8_0-q8_0,f16-f16,bf16-bf16 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VBMI = 1 | AVX512_VNNI = 1 | AVX512_BF16 = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.19.041.628 I perplexity: tokenizing the input ..
+0.19.403.763 I perplexity: tokenization took 362.124 ms
+0.19.403.836 I perplexity: calculating perplexity over 20 chunks, n_ctx=2048, batch_size=2048, n_seq=1
+2.15.648.810 I perplexity: 116.24 seconds per pass - ETA 38.73 minutes
+[1]7.2120,[2]9.0080,[3]9.2894,[4]8.6928,[5]8.6390,[6]7.4731,[7]7.2793,[8]7.1775,[9]7.6181,[10]7.6754,[11]7.5491,[12]7.6101,[13]7.7804,[14]7.9353,[15]8.0640,[16]8.2774,[17]8.2945,[18]8.2613,[19]8.0791,40.06.635.928 I Final estimate: PPL = 8.1106 +/- 0.15699
+[20]8.1106,
+
+=== convert.log (key lines)
+INFO:hf-to-gguf:blk.8.attn_k_norm.weight,          torch.bfloat16 --> F32, shape = {128}
+INFO:hf-to-gguf:blk.8.attn_k.weight,               torch.bfloat16 --> BF16, shape = {5120, 1024}
+INFO:hf-to-gguf:blk.8.attn_output.weight,          torch.bfloat16 --> BF16, shape = {10240, 5120}
+INFO:hf-to-gguf:blk.8.attn_q_norm.weight,          torch.bfloat16 --> F32, shape = {128}
+INFO:hf-to-gguf:blk.8.attn_q.weight,               torch.bfloat16 --> BF16, shape = {5120, 10240}
+INFO:hf-to-gguf:blk.8.attn_v.weight,               torch.bfloat16 --> BF16, shape = {5120, 1024}
+INFO:hf-to-gguf:blk.8.attn_vres_lambda.weight,     torch.bfloat16 --> F32, shape = {1}
+INFO:hf-to-gguf:blk.9.attn_norm.weight,            torch.bfloat16 --> F32, shape = {5120}
+INFO:hf-to-gguf:blk.9.ffn_down.weight,             torch.bfloat16 --> BF16, shape = {40960, 5120}
+INFO:hf-to-gguf:blk.9.ffn_gate.weight,             torch.bfloat16 --> BF16, shape = {5120, 40960}
+INFO:hf-to-gguf:blk.9.ffn_up.weight,               torch.bfloat16 --> BF16, shape = {5120, 40960}
+INFO:hf-to-gguf:blk.9.post_attention_norm.weight,  torch.bfloat16 --> F32, shape = {5120}
+INFO:hf-to-gguf:blk.9.post_ffw_norm.weight,        torch.bfloat16 --> F32, shape = {5120}
+INFO:hf-to-gguf:blk.9.ffn_norm.weight,             torch.bfloat16 --> F32, shape = {5120}
+INFO:hf-to-gguf:blk.9.attn_gate.weight,            torch.bfloat16 --> BF16, shape = {5120, 10240}
+INFO:hf-to-gguf:blk.9.attn_k_norm.weight,          torch.bfloat16 --> F32, shape = {128}
+INFO:hf-to-gguf:blk.9.attn_k.weight,               torch.bfloat16 --> BF16, shape = {5120, 1024}
+INFO:hf-to-gguf:blk.9.attn_output.weight,          torch.bfloat16 --> BF16, shape = {10240, 5120}
+INFO:hf-to-gguf:blk.9.attn_q_norm.weight,          torch.bfloat16 --> F32, shape = {128}
+INFO:hf-to-gguf:blk.9.attn_q.weight,               torch.bfloat16 --> BF16, shape = {5120, 10240}
+INFO:hf-to-gguf:blk.9.attn_v.weight,               torch.bfloat16 --> BF16, shape = {5120, 1024}
+INFO:hf-to-gguf:blk.9.attn_vres_lambda.weight,     torch.bfloat16 --> F32, shape = {1}
+INFO:hf-to-gguf:output_norm.weight,                torch.bfloat16 --> F32, shape = {5120}
+INFO:hf-to-gguf:Set meta model
+INFO:hf-to-gguf:Set model parameters
+INFO:hf-to-gguf:gguf: context length = 2097152
+INFO:hf-to-gguf:gguf: embedding length = 5120
+INFO:hf-to-gguf:gguf: feed forward length = 40960
+INFO:hf-to-gguf:gguf: head count = 80
+INFO:hf-to-gguf:gguf: key-value head count = 8
+INFO:hf-to-gguf:gguf: rope theta = 10000.0
+INFO:hf-to-gguf:gguf: rms norm epsilon = 1e-06
+INFO:hf-to-gguf:gguf: file type = 32
+INFO:hf-to-gguf:Set model quantization version
+INFO:hf-to-gguf:Set model tokenizer
+WARNING:gguf.gguf_writer:Duplicated key name 'tokenizer.chat_template', overwriting it with new value '{%- if tools %}\n    {{- \'<|im_start|>system\\n\' }}\n    {%- if messages[0][\'role\'] == \'syst
+INFO:hf-to-gguf:gguf: chat_template from chat_template.jinja
+INFO:hf-to-gguf:gguf: eot_token_id = 100265
+INFO:gguf.gguf_writer:/out/ripple-65b-bf16.gguf: n_tensors = 1203, total_size = 129.6G
+INFO:hf-to-gguf:Model successfully exported to /out/ripple-65b-bf16.gguf
