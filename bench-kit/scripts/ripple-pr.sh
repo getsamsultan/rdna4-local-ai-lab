@@ -56,6 +56,9 @@ quant() {
 }
 
 ppl() {
+  # Q8_0 is ~69 GB across 3 GPUs: any other model left running (e.g. lab-llm on GPU0,1) causes OOM at load.
+  local busy; busy=$(docker ps --format '{{.Names}}')
+  [ -z "$busy" ] || { log "STOP: running containers may hold VRAM: $(echo $busy). Stop them first (docker stop <name>), restart after."; exit 1; }
   local txt="$OUTDIR/wiki.test.raw"
   if [ ! -f "$txt" ]; then
     log "fetching wikitext-2 test set"
