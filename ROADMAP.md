@@ -54,7 +54,8 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [ ] **Physical slot swap** to confirm the chipset-slot result is the slot, not the card
 - [x] **ROCm 10 side-by-side**: 80B no difference; Qwen3.8 −2.7% generation, −3.9% prompt on 10.1 (A–B–A–B after warm-up). Staying on 7.2.1 for serving
 - [ ] **Multi-user serving** — how batching changes cost per token
-- [ ] **What does "local" send out?** Audit outbound traffic from the stack's containers
+- [ ] **What does "local" send out?** Audit outbound traffic from the stack's containers. Extend it into a reusable **egress audit**: capture every outbound connection and DNS lookup during a normal workday, and report how much of what leaves is sensitive. "Stateless" requests still carry their content, so minimising and redacting what's sent matters more than whether the far end keeps state
+- [ ] **Routing eval (hybrid local + frontier):** run the same blind eval on a local model and a frontier model, and measure which tasks the local model handles as well. The output is a measured "local share" per task type, not a slogan, plus what the remaining frontier calls would expose
 - [ ] **PSU telemetry** — read the AX1600i (if Linux can see it) to measure power-supply losses, wall vs DC
 - [ ] **Apartment energy monitoring** — ESP32 on the meter's pulse LED, Pi historian, Grafana: a mini EPMS
 - [ ] **OT security lab** — expose that data over Modbus and show what an unauthenticated industrial protocol looks like on the wire
