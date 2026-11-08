@@ -44,6 +44,26 @@ Chunk by chunk (running average):
 
 The gap settles at about 0.05%, well inside the error bar, which is what different summation order between backends looks like. A broken kernel or skipped RoPE shows up as perplexity in the hundreds or as NaN, not in the third decimal.
 
+## Update 8 Nov: KL divergence against a CPU reference
+
+Suggested by a reader on AMD Community: perplexity only scores the correct token, KLD compares the whole probability distribution at every token. Method: CPU run of Q8_0 (20 chunks, ctx 2048, no GPUs in the container) saved its logits with `--kl-divergence-base`; ROCm runs were then scored against that file with `--kl-divergence`. To give the backend gap a scale, Q6_K on ROCm was scored against the same Q8_0 CPU reference (so that row mixes the quantisation step and the backend change).
+
+| ROCm vs CPU Q8_0 reference | Q8_0 (backend only) | Q6_K (quant step + backend) |
+|---|---|---|
+| Mean KLD | **0.0022 ± 0.0003** | 0.0083 ± 0.0006 |
+| Median KLD | 0.00023 | 0.0013 |
+| 99th percentile KLD | 0.022 | 0.103 |
+| Same top token | **98.71 ± 0.08%** | 96.97 ± 0.12% |
+| RMS Δp | 1.12 ± 0.13% | 2.21 ± 0.13% |
+| Mean Δp (bias) | 0.003 ± 0.008% (none) | −0.033 ± 0.015% |
+| PPL ratio vs reference | 1.000000 ± 0.000619 | |
+
+**Reading:** the CPU vs ROCm difference on the same file is about a quarter of the Q8_0 to Q6_K step by mean KLD, about a fifth by median, and shows no bias. That is the size of normal rounding differences between backends, not a broken kernel. The ~1.3% of tokens where the top choice flips are near-ties.
+
+Guess written down before the run: mean KLD under 0.01 (met), same top token above 99% (missed: 98.7%), no bias (met).
+
+Small note: perplexity recomputed from the stored base file is 8.106938, against 8.1106 printed by the live CPU run. The base file stores probabilities in compact form, which moves PPL by about 0.05%, the same size as the CPU vs ROCm gap reported above. Raw KLD logs to follow.
+
 ## Caveats
 
 - **8.13 is not comparable to the 3.01 in the PR.** The PR does not state the dataset or context length, and Ripple Preview ships with a chat and tool-call template, so it is likely instruction-tuned; those score much worse on Wikipedia text than base models. Here perplexity is a "does it compute correctly" check, not a quality score.
