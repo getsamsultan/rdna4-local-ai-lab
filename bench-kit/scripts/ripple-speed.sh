@@ -15,7 +15,7 @@ if systemctl is-active -q netdata 2>/dev/null; then
   sudo -v && sudo systemctl restart netdata && mark "netdata restarted (see data/2026-10-31-netdata-aba.md)"; sleep 30
 fi
 
-( while true; do echo "$(date -Is) $(rocm-smi --showtemp --showpower --csv 2>/dev/null | tail -n +2 | tr '\n' ' ')"; sleep 10; done ) > "$OUT/gpu.log" &
+( while true; do echo "$(date -Is) $(rocm-smi --showtemp --showpower --showclocks --csv 2>/dev/null | tail -n +2 | tr '\n' ' ')"; sleep 10; done ) > "$OUT/gpu.log" &
 LOGGER=$!; trap 'kill $LOGGER 2>/dev/null' EXIT
 
 bench() {  # bench <gguf> <extra args...>

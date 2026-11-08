@@ -17,17 +17,18 @@ log() { echo "$(date -Is) $*" | tee -a "$OUT/ripple.log"; }
 
 image() { cat "$OUT/image.txt" 2>/dev/null || { echo "run the build stage first" >&2; exit 1; }; }
 run() {  # run <entrypoint> <args...>  (mounts weights read-only, output dir read-write)
-  local ep=$1; shift
+  local ep=$1 img; shift
+  img=$(image) || exit 1   # $(image) inside docker's args would not stop the script on its own
   docker run --rm --device /dev/kfd --device /dev/dri --group-add video --group-add render \
     -e HIP_VISIBLE_DEVICES="${HIP:-0,1,2}" -v "$HFDIR:/hf:ro" -v "$OUTDIR:/out" -v "$OUT:/log" \
-    --entrypoint "$ep" "$(image)" "$@"
+    --entrypoint "$ep" "$img" "$@"
 }
 
 build() {
   cd "$SRC"
-  git fetch -q origin "pull/$PR/head:pr-$PR-ripple"
-  [ -d "$WT" ] || git worktree add -q "$WT" "pr-$PR-ripple"
-  cd "$WT" && git checkout -q "pr-$PR-ripple" && git pull -q --ff-only origin "pull/$PR/head" 2>/dev/null || true
+  # fetch into FETCH_HEAD and check out detached: fetching into a branch that is checked out in the worktree fails
+  [ -d "$WT" ] || git worktree add -q --detach "$WT"
+  cd "$WT" && git fetch -q origin "pull/$PR/head" && git checkout -q --detach FETCH_HEAD
   local sha; sha=$(git rev-parse --short HEAD)
   local tag="lab-llama:ripple-pr$PR-$sha-rocm7.2.1"
   log "building $tag from PR #$PR head $sha"
