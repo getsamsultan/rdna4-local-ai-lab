@@ -4,7 +4,7 @@
 #   convert  official BF16 safetensors -> BF16 GGUF, then CHECK the sliding-window key is present
 #   quant    BF16 GGUF -> Q8_0 and Q6_K, sha256 of every file
 #   ppl      perplexity on wikitext-2 (Q8_0, GPUs 0,1,2): the "check that can fail" before any speed tests
-# Usage: ./ripple-pr.sh all        (or one stage)      Logs and hashes go to ~/bench/ripple-<date>/
+# Usage: [REF=<pr commit>] ./ripple-pr.sh all        (or one stage)      Logs and hashes go to ~/bench/ripple-<date>/
 set -euo pipefail
 STAGE="${1:?usage: $0 build|convert|quant|ppl|all}"
 PR=31692
@@ -28,7 +28,7 @@ build() {
   cd "$SRC"
   # fetch into FETCH_HEAD and check out detached: fetching into a branch that is checked out in the worktree fails
   [ -d "$WT" ] || git worktree add -q --detach "$WT"
-  cd "$WT" && git fetch -q origin "pull/$PR/head" && git checkout -q --detach FETCH_HEAD
+  cd "$WT" && git fetch -q origin "pull/$PR/head" && git checkout -q --detach "${REF:-FETCH_HEAD}"   # REF=<sha> pins a PR commit
   local sha; sha=$(git rev-parse --short HEAD)
   local tag="lab-llama:ripple-pr$PR-$sha-rocm7.2.1"
   log "building $tag from PR #$PR head $sha"
