@@ -56,13 +56,16 @@ Suggested by a reader on AMD Community: perplexity only scores the correct token
 | Same top token | **98.71 ± 0.08%** | 96.97 ± 0.12% |
 | RMS Δp | 1.12 ± 0.13% | 2.21 ± 0.13% |
 | Mean Δp (bias) | 0.003 ± 0.008% (none) | −0.033 ± 0.015% |
-| PPL ratio vs reference | 1.000000 ± 0.000619 | |
+| PPL ratio vs reference | 1.000000 ± 0.000619 | 0.9967 ± 0.0011 |
+| Seconds per 2048-token chunk (ROCm) | 1.78 | 3.40 |
 
 **Reading:** the CPU vs ROCm difference on the same file is about a quarter of the Q8_0 to Q6_K step by mean KLD, about a fifth by median, and shows no bias. That is the size of normal rounding differences between backends, not a broken kernel. The ~1.3% of tokens where the top choice flips are near-ties.
 
 Guess written down before the run: mean KLD under 0.01 (met), same top token above 99% (missed: 98.7%), no bias (met).
 
-Small note: perplexity recomputed from the stored base file is 8.106938, against 8.1106 printed by the live CPU run. The base file stores probabilities in compact form, which moves PPL by about 0.05%, the same size as the CPU vs ROCm gap reported above. Raw KLD logs to follow.
+Small note: perplexity recomputed from the stored base file is 8.106938, against 8.1106 printed by the live CPU run. The base file stores probabilities in compact form, which moves PPL by about 0.05%, the same size as the CPU vs ROCm gap reported above. Q6_K came out 0.33% *lower* in perplexity than the Q8_0 reference (about 3 standard errors). That happens with quants on a single text and is not a quality gain; KLD is the better measure here. Q6_K also took nearly twice as long per chunk on ROCm, a hint to check in the speed tests.
+
+Raw logs: [`cpu-base.log`](2026-11-05-ripple-65b-rocm/kld/cpu-base.log) (slow first pass: another run was competing for the CPU until it was stopped; results are unaffected and identical to 5 Nov), [`rocm-q8-vs-cpu.log`](2026-11-05-ripple-65b-rocm/kld/rocm-q8-vs-cpu.log), [`rocm-q6k-vs-cpu.log`](2026-11-05-ripple-65b-rocm/kld/rocm-q6k-vs-cpu.log).
 
 ## Caveats
 

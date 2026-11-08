@@ -1,0 +1,12 @@
+0.00.110.097 E ggml_cuda_init: failed to initialize ROCm: no ROCm-capable device is detected
+0.01.756.265 I cmn          init: llama threadpool init, n_threads = 16
+0.03.530.658 I 
+0.03.530.772 I system_info: n_threads = 16 (n_threads_batch = 16) / 32 | ROCm : NO_VMM = 1 | FA_QUANTS = q4_0-q4_0,q8_0-q8_0,f16-f16,bf16-bf16 | CPU : SSE3 = 1 | SSSE3 = 1 | AVX = 1 | AVX2 = 1 | F16C = 1 | FMA = 1 | BMI2 = 1 | AVX512 = 1 | AVX512_VBMI = 1 | AVX512_VNNI = 1 | AVX512_BF16 = 1 | LLAMAFILE = 1 | OPENMP = 1 | REPACK = 1 | 
+0.03.530.864 I perplexity: saving all logits to /out/kld-cpu-q8_0-c20.bin
+0.03.530.870 I perplexity: tokenizing the input ..
+0.03.864.702 I perplexity: tokenization took 333.823 ms
+0.03.864.780 I perplexity: calculating perplexity over 20 chunks, n_ctx=2048, batch_size=2048, n_seq=1
+3.49.131.469 I perplexity: 225.18 seconds per pass - ETA 1 hours 15.05 minutes
+[1]7.2120,[2]9.0080,[3]9.2894,[4]8.6928,[5]8.6390,[6]7.4731,[7]7.2793,[8]7.1775,[9]7.6181,[10]7.6754,[11]7.5491,[12]7.6101,[13]7.7804,[14]7.9353,[15]8.0640,[16]8.2774,[17]8.2945,[18]8.2613,[19]8.0791,[20]8.1106,
+54.04.356.884 I Final estimate: PPL = 8.1106 +/- 0.15699
+
