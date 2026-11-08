@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Ripple-65B speed, A-B-A: Q8_0 / Q6_K / Q8_0 on 3x R9700, llama-bench pp512, pp2048, tg128, r=5.
 # One warm-up first (discarded). GPU temperature and power logged every 10 s alongside (hot-day check).
-# Usage: ./ripple-speed.sh      Needs: no other containers on the GPUs (stop lab-llm first, start it after).
+# Usage: [WARM_MIN=5] [IMG=...] ./ripple-speed.sh      Needs: no other containers on the GPUs (stop lab-llm first, start it after).
 set -euo pipefail
 IMG="${IMG:-$(cat ~/bench/ripple-2026-11-05/image.txt)}"
 D="${D:-/mnt/models/ripple-65b-gguf}"
@@ -26,6 +26,12 @@ bench() {  # bench <gguf> <extra args...>
 
 mark "image $IMG; args $ARGS"
 mark "warm-up (discarded)"; bench ripple-65b-q8_0.gguf -ngl 99 -sm layer -fa 1 -p 512 -n 32 -r 1 > "$OUT/0-warmup.jsonl"
+# WARM_MIN=N: keep the cards busy for N minutes before run 1 (8 Nov: cold run 1 was ~10% faster on prompts than run 3)
+WARM_MIN="${WARM_MIN:-0}"; t_end=$(( $(date +%s) + WARM_MIN*60 ))
+while [ "$(date +%s)" -lt "$t_end" ]; do
+  bench ripple-65b-q8_0.gguf -ngl 99 -sm layer -fa 1 -p 2048 -n 0 -r 10 >> "$OUT/0-warmup.jsonl"
+  mark "warming: $(tail -1 "$OUT/gpu.log" | cut -c1-120)"
+done
 i=1
 for m in q8_0 q6_k q8_0; do
   mark "run $i: $m"; bench "ripple-65b-$m.gguf" $ARGS > "$OUT/$i-$m.jsonl"; i=$((i+1))
