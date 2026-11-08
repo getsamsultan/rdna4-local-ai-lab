@@ -24,13 +24,14 @@ bench() {  # bench <gguf> <extra args...>
     -e HIP_VISIBLE_DEVICES=0,1,2 -v "$D:/out:ro" --entrypoint /app/llama-bench "$IMG" -m "/out/$m" "$@" -o jsonl 2>>"$OUT/stderr.log"
 }
 
-mark "image $IMG; args $ARGS"; sha256sum "$D"/ripple-65b-q8_0.gguf "$D"/ripple-65b-q6_k.gguf > "$OUT/models.sha256" &
+mark "image $IMG; args $ARGS"
 mark "warm-up (discarded)"; bench ripple-65b-q8_0.gguf -ngl 99 -sm layer -fa 1 -p 512 -n 32 -r 1 > "$OUT/0-warmup.jsonl"
 i=1
 for m in q8_0 q6_k q8_0; do
   mark "run $i: $m"; bench "ripple-65b-$m.gguf" $ARGS > "$OUT/$i-$m.jsonl"; i=$((i+1))
 done
-wait
+# hash AFTER the runs (not in the background: it competed for the disk, and a bare `wait` also waited on the endless GPU logger)
+mark "hashing models"; sha256sum "$D"/ripple-65b-q8_0.gguf "$D"/ripple-65b-q6_k.gguf > "$OUT/models.sha256"
 
 mark "summary (t/s, mean ± stddev of 5)"
 for f in "$OUT"/[1-9]-*.jsonl; do
