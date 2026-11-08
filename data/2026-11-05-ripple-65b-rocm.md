@@ -2,7 +2,7 @@
 
 **Question:** Ricursive's Ripple-65B Preview (65B dense, Apache 2.0) needs an unmerged llama.cpp PR ([#31692](https://github.com/ggml-org/llama.cpp/pull/31692)) that its author tested on CPU and CUDA only. Does it run, and compute correctly, on ROCm with 3× R9700?
 
-**Answer:** Yes. Perplexity on the same Q8_0 file agrees between ROCm and the CPU backend to **0.05%**, chunk by chunk. No speed numbers yet (those come next, A–B–A).
+**Answer:** Yes. Perplexity on the same Q8_0 file agrees between ROCm and the CPU backend to **0.05%**, chunk by chunk, and KL divergence against a CPU reference is 0.0022 (98.7% same top token). Speed on 3× R9700: **8.4 t/s generation at Q8_0, 10.8 at Q6_K**; prompts about 1,100 to 1,200 t/s at Q8_0 and half that at Q6_K.
 
 ## Setup
 
@@ -67,12 +67,41 @@ Small note: perplexity recomputed from the stored base file is 8.106938, against
 
 Raw logs: [`cpu-base.log`](2026-11-05-ripple-65b-rocm/kld/cpu-base.log) (slow first pass: another run was competing for the CPU until it was stopped; results are unaffected and identical to 5 Nov), [`rocm-q8-vs-cpu.log`](2026-11-05-ripple-65b-rocm/kld/rocm-q8-vs-cpu.log), [`rocm-q6k-vs-cpu.log`](2026-11-05-ripple-65b-rocm/kld/rocm-q6k-vs-cpu.log).
 
+## Update 8 Nov: speed, A–B–A (Q8_0 / Q6_K / Q8_0)
+
+llama-bench, 3× R9700, `-ngl 99 -sm layer -fa 1`, r=5, image 6414d5b, netdata restarted first, GPU temperature, power and clocks logged every 10 s. Script: [`ripple-speed.sh`](../bench-kit/scripts/ripple-speed.sh). Two sessions: one starting on cold cards (16:21), one after 5 minutes of warm-up load (17:47).
+
+| t/s | Cold: Q8_0 | Q6_K | Q8_0 | Warm: Q8_0 | Q6_K | Q8_0 |
+|---|---|---|---|---|---|---|
+| Generation, tg128 | **8.43** | **10.78** | **8.39** | **8.43** | **10.77** | **8.40** |
+| Prompt, pp512 | 632 | 318 | 557 | 624 | 315 | 574 ± 28 |
+| Prompt, pp2048 | 1,199 | 617 | 1,084 ± 25 | 1,187 | 612 | 1,109 ± 30 |
+
+**Generation is clean:** both A runs agree, in both sessions, to 0.05 t/s. Q6_K generates 28% faster than Q8_0, almost exactly their size ratio (about 53.2 GB vs 68.9 GB, 1.30×). That is memory-bound generation: about 575 GB/s for either file, roughly 90% of the R9700's 640 GB/s, with one card reading at a time under `-sm layer`.
+
+**Q6_K reads prompts at half the speed of Q8_0** on ROCm (gfx1201), far beyond any run-to-run noise here, and consistent with the 3.40 vs 1.78 s per chunk seen in the KLD runs. Practical choice: Q6_K for chat (faster replies), Q8_0 for long documents and agents.
+
+**Q8_0 prompt speed is not settled.** In both sessions the second Q8_0 run is 7 to 12% slower with a large spread, while the first is tight. Per-repetition values from the warm session show it is two levels, not a slow decline:
+
+| Warm session | rep 1 | 2 | 3 | 4 | 5 |
+|---|---|---|---|---|---|
+| Run 1 Q8_0, pp2048 | 1187.8 | 1187.3 | 1187.1 | 1186.1 | 1185.6 |
+| Run 3 Q8_0, pp2048 | 1078.1 | 1129.0 | 1131.5 | 1129.7 | 1074.3 |
+| Run 3 Q8_0, pp512 | 560.8 | 623.3 | 558.9 | 564.3 | 563.5 |
+
+My first guess (cold cards boost higher, so run 1 is faster) was wrong: the warm session shows the same pattern. Discrete steps point at a clock or power state switching between levels rather than temperature. Next test: the same A–B–A with a fixed performance level, then with a power cap. Until then, read Q8_0 prompt speed as **about 1,080 to 1,200 t/s at 2048 tokens**.
+
+PCIe links seen under load in the GPU log: GPU0 and GPU1 PCIe 5.0 x8 (32 GT/s), GPU2 PCIe 4.0 x4 (16 GT/s).
+
+## Update 8 Nov: re-check at the newer PR commit
+
+The PR gained six commits after 6414d5b (explicit RoPE/NoPE pattern, per-layer SwiGLU clamp, model RoPE parameters on the sliding layers, chat template override dropped). The current head (cccba7f, "match #31733 refactor") does not build on its own: it needs that refactor from master. Built ebe7f66 instead, which has all the maths changes, and re-ran perplexity on the same Q8_0 file: **8.1264 ± 0.0596, identical** to 6414d5b. The results above hold for the current PR maths.
+
 ## Caveats
 
 - **8.13 is not comparable to the 3.01 in the PR.** The PR does not state the dataset or context length, and Ripple Preview ships with a chat and tool-call template, so it is likely instruction-tuned; those score much worse on Wikipedia text than base models. Here perplexity is a "does it compute correctly" check, not a quality score.
 - My script's first guess ("above 5 = broken") was too strict for that reason. The CPU cross-check is what settles it.
 - The CPU vs GPU time ratio (~65× per chunk) is a single run each, not A–B–A. Rough only.
-- Q6_K was made and hashed but not yet checked.
 
 ## Gotcha
 
@@ -94,4 +123,4 @@ GGUFs made from an unmerged PR; not published. Safetensors hashes, full logs and
 
 ## Next
 
-Speed A–B–A (tg and pp, Q8_0 and Q6_K) · Q6_K perplexity · a comment on PR #31692 with these results · Ripple in the next blind eval round.
+Q8_0 prompt-speed dip (fixed performance level, then power cap) · a comment on PR #31692 with these results · Ripple in the next blind eval round.
