@@ -89,12 +89,17 @@ ppl() {
 
 kld() {
   gpus_free; wiki
-  local base=/out/kld-cpu-bf16-c20.bin
-  if [ ! -s "$OUTDIR/kld-cpu-bf16-c20.bin" ]; then
+  local base=/out/kld-cpu-bf16-c20.bin done="$OUTDIR/kld-cpu-bf16-c20.done"
+  # Reuse the reference only if the run that wrote it finished (a reset or crash mid-run leaves a partial file).
+  if [ ! -f "$done" ]; then
+    rm -f "$OUTDIR/kld-cpu-bf16-c20.bin" 2>/dev/null || run cpu rm -f "$base"
     log "CPU BF16 reference, 20 chunks (saves logits)"
     run cpu /app/llama-perplexity -m /out/inkling-2-mini-bf16.gguf -f /out/wiki.test.raw -c 2048 --chunks 20 -t 16 \
-      --kl-divergence-base "$base" > "$OUT/kld-cpu-base.log" 2>&1
+      --kl-divergence-base "$base" > "$OUT/kld-cpu-base.log" 2>&1 \
+      && grep -q 'Final estimate' "$OUT/kld-cpu-base.log" \
+      || { log "STOP: CPU reference did not finish, see kld-cpu-base.log"; exit 1; }
     grep 'Final estimate' "$OUT/kld-cpu-base.log" | sed 's/^/cpu bf16: /' | tee -a "$OUT/inkling.log"
+    sha256sum "$OUTDIR/kld-cpu-bf16-c20.bin" | tee "$done"
   fi
   for q in $QUANTS; do
     log "KLD: ROCm $q vs CPU BF16, $GPU_ARGS"
