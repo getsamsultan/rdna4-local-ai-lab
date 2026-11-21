@@ -21,8 +21,8 @@ Q8_0 and Q4_K_M GGUFs of [thinkingmachines/Inkling-2-Mini](https://huggingface.c
 
 | File | Size | sha256 |
 |---|---|---|
-| `inkling-2-mini-q8_0.gguf` | TBD | `cf5315ada5535dfb21b019c168ea418bdd56f1dd29f11961d25affb40fe583af` |
-| `inkling-2-mini-q4_k_m.gguf` | 17,478,094,208 bytes (16.3 GiB) | `4c3ab725c69bedd1efd4d9fa6fe8994684e875f205c0c8be78c16d317a946b22` |
+| `inkling-2-mini-q8_0.gguf` | 27.8 GB (25.9 GiB) | `cf5315ada5535dfb21b019c168ea418bdd56f1dd29f11961d25affb40fe583af` |
+| `inkling-2-mini-q4_k_m.gguf` | 17.5 GB (16.3 GiB) | `4c3ab725c69bedd1efd4d9fa6fe8994684e875f205c0c8be78c16d317a946b22` |
 
 ## How it was made
 
