@@ -8,7 +8,10 @@
 #   quant    BF16 -> Q8_0 and Q4_K_M, sha256 of everything
 #   ppl      perplexity on wikitext-2, ctx 2048: BF16, Q8_0, Q4_K_M on 3 GPUs
 #   kld      CPU BF16 reference (20 chunks, saves logits), then ROCm BF16 / Q8_0 / Q4_K_M scored against it
-# Usage: [REF=<commit>] ./inkling-mini.sh <stage>|all     Needs: no containers holding the GPUs (docker stop lab-llm lemon)
+# Usage: [REF=<commit>] [QUANTS="bf16 q8_0"] [GPU_ARGS="-ngl 99 -sm layer -fa on -ts 6,36,6"] ./inkling-mini.sh <stage>|all
+#   Needs: no containers holding the GPUs (docker stop lab-llm lemon)
+#   Note: with -sm layer, llama.cpp appears to split by layer PASSES (48), not stored layers (24), so the default even
+#   split puts stored layers 0-15 on GPU0 (BF16: 34 GB, out of memory). -ts 6,36,6 keeps the 12 looped layers on GPU1.
 set -euo pipefail
 STAGE="${1:?usage: $0 build|convert|quant|ppl|kld|all}"
 SRC="${SRC:-$HOME/llama.cpp}"                    # existing upstream clone, left untouched
@@ -16,6 +19,9 @@ WT="${WT:-$HOME/llama-inkling}"                  # separate worktree
 HFDIR="${HFDIR:-/mnt/models/inkling-2-mini}"     # hf download thinkingmachines/Inkling-2-Mini --local-dir $HFDIR
 OUTDIR="${OUTDIR:-/mnt/models/inkling-2-mini-gguf}"
 OUT="$HOME/bench/inkling-$(date +%F)"; mkdir -p "$OUT" "$OUTDIR"
+QUANTS="${QUANTS:-bf16 q8_0 q4_k_m}"
+GPU_ARGS="${GPU_ARGS:--ngl 99 -sm layer -fa on}"
+TAG="${TAG:-}"   # suffix for log names, e.g. TAG=-ts6-36-6
 log() { echo "$(date -Is) $*" | tee -a "$OUT/inkling.log"; }
 image() { cat "$OUT/image.txt" 2>/dev/null || ls -t "$HOME"/bench/inkling-*/image.txt 2>/dev/null | head -1 | xargs -r cat || true; }
 gpus_free() {
@@ -72,11 +78,12 @@ wiki() {
 
 ppl() {
   gpus_free; wiki
-  for q in bf16 q8_0 q4_k_m; do
-    log "perplexity $q, ctx 2048, 3 GPUs"
-    run gpu /app/llama-perplexity -m "/out/inkling-2-mini-$q.gguf" -f /out/wiki.test.raw -c 2048 -ngl 99 -sm layer -fa on \
-      > "$OUT/ppl-$q.log" 2>&1 || true
-    grep -E 'Final estimate' "$OUT/ppl-$q.log" | sed "s/^/$q: /" | tee -a "$OUT/inkling.log" || log "$q: no final estimate, see ppl-$q.log"
+  for q in $QUANTS; do
+    log "perplexity $q, ctx 2048, 3 GPUs, $GPU_ARGS"
+    run gpu /app/llama-perplexity -m "/out/inkling-2-mini-$q.gguf" -f /out/wiki.test.raw -c 2048 $GPU_ARGS \
+      > "$OUT/ppl-$q$TAG.log" 2>&1 || true
+    grep -E 'model buffer size' "$OUT/ppl-$q$TAG.log" | sed "s/^/$q: /" | tee -a "$OUT/inkling.log" || true
+    grep -E 'Final estimate' "$OUT/ppl-$q$TAG.log" | sed "s/^/$q: /" | tee -a "$OUT/inkling.log" || log "$q: no final estimate, see ppl-$q$TAG.log"
   done
 }
 
@@ -89,11 +96,11 @@ kld() {
       --kl-divergence-base "$base" > "$OUT/kld-cpu-base.log" 2>&1
     grep 'Final estimate' "$OUT/kld-cpu-base.log" | sed 's/^/cpu bf16: /' | tee -a "$OUT/inkling.log"
   fi
-  for q in bf16 q8_0 q4_k_m; do
-    log "KLD: ROCm $q vs CPU BF16"
-    run gpu /app/llama-perplexity -m "/out/inkling-2-mini-$q.gguf" -c 2048 --chunks 20 -ngl 99 -sm layer -fa on \
-      --kl-divergence-base "$base" --kl-divergence > "$OUT/kld-rocm-$q.log" 2>&1 || true
-    grep -E 'Mean +KLD|Same top p|Mean PPL\(Q\)/PPL\(base\)' "$OUT/kld-rocm-$q.log" | sed "s/^/$q: /" | tee -a "$OUT/inkling.log"
+  for q in $QUANTS; do
+    log "KLD: ROCm $q vs CPU BF16, $GPU_ARGS"
+    run gpu /app/llama-perplexity -m "/out/inkling-2-mini-$q.gguf" -c 2048 --chunks 20 $GPU_ARGS \
+      --kl-divergence-base "$base" --kl-divergence > "$OUT/kld-rocm-$q$TAG.log" 2>&1 || true
+    grep -E 'Mean +KLD|Same top p|Mean PPL\(Q\)/PPL\(base\)' "$OUT/kld-rocm-$q$TAG.log" | sed "s/^/$q: /" | tee -a "$OUT/inkling.log"
   done
 }
 
