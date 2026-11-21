@@ -61,6 +61,26 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 - [ ] **OT security lab** — expose that data over Modbus and show what an unauthenticated industrial protocol looks like on the wire
 - [ ] **Cross-rig comparison** with another builder's server-class setup
 
+## Later (after the Lemonade challenge entry and eval round 2)
+
+### Inference engineering projects, adapted to this AMD lab
+
+From a widely shared list of 12 "inference infrastructure" projects, rewritten for ROCm and a home lab. Not doing: multi-node H100/L40 disaggregation over InfiniBand and cloud spot-GPU autoscaling (hardware and budget this lab does not have; simulated instead inside the security track below).
+
+- [ ] **Custom kernel:** a fused RMSNorm or attention kernel in Triton on RDNA4, profiled with ROCm's profilers against PyTorch (roofline, memory bandwidth)
+- [x] **Spilling to RAM and NVMe:** MoE experts in system RAM measured (`-ncmoe` sweep) and a 748B model running with SSD offload; next, the KV cache itself
+- [ ] **Grammar-constrained decoding:** guaranteed-valid JSON tool calls with llama.cpp grammars, measured for speed and failure rate
+- [ ] **MoE across GPUs:** expert placement and load across the three cards (builds on the Inkling split finding)
+- [x] **Quantisation with proven cost:** KL divergence against a full-precision reference for Ripple-65B and Inkling 2 Mini; next, imatrix and very low-bit quants
+- [ ] **Speculative decoding:** a draft or MTP model, speedup measured A-B-A, output identity checked with `squeeze check`
+- [ ] **Semantic cache and complexity router:** built with the security requirements first (see below)
+- [ ] **Edge fallback:** a small model on a laptop or in the browser when the rig is down
+- [x] **Public benchmarks:** this lab; next, Pareto curves (cost vs time to first token vs throughput) for llama.cpp, Lemonade and vLLM on ROCm
+
+### Agentic security track
+
+The same 12 layers, asked a different question: what can an attacker do at each one once the model acts as an agent, and how do we close it. → [docs/agentic-security-projects.md](docs/agentic-security-projects.md)
+
 ## Learning
 
 Full exercise-by-exercise plan with rubrics: [CERTIFICATION.md](CERTIFICATION.md)
