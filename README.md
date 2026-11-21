@@ -92,6 +92,8 @@ A minimal, offline-first ROCm serving stack of my own (ROCm 10.1 ready) · R9700
 
 **Sister repo:** [model-editing-lab](https://github.com/getsamsultan/model-editing-lab), on what it costs to change an open model's weights. **Upstream:** [Osmantic/ODS #7786](https://github.com/Osmantic/ODS/issues/7786), [#7787](https://github.com/Osmantic/ODS/issues/7787).
 
+**Find me:** [LinkedIn](https://www.linkedin.com/in/samsultan-ai) · [Hugging Face](https://huggingface.co/askthesultans) · [X @sultanminutes](https://x.com/sultanminutes)
+
 ---
 
 <sub>Measurements, hardware and decisions are mine. Write-ups were drafted with an AI assistant and checked against the raw data. Scripts under the MIT licence. Not affiliated with AMD, ASRock, Qwen or any project mentioned.</sub>
