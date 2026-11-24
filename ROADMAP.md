@@ -77,6 +77,11 @@ From a widely shared list of 12 "inference infrastructure" projects, rewritten f
 - [ ] **Edge fallback:** a small model on a laptop or in the browser when the rig is down
 - [x] **Public benchmarks:** this lab; next, Pareto curves (cost vs time to first token vs throughput) for llama.cpp, Lemonade and vLLM on ROCm
 
+### My own engine
+
+- [ ] **Report the Inkling weight-split rule to llama.cpp** (written by me, per their AI policy), separate from #32718; then offer ROCm results on #32718's patch
+- [ ] **A teaching inference engine for RDNA4:** written from scratch in C++ and HIP, Qwen3 dense on one R9700, measured against llama.cpp on the same GGUF at every step. Milestones M0 (GGUF reader and tokenizer) to M5 (Q8_0) teach how an engine works; M6 to M8 make outputs repeatable by design, harden the server and check provenance at load, the start of an engine you can audit → [design](docs/teaching-engine.md)
+
 ### Agentic security track
 
 The same 12 layers, asked a different question: what can an attacker do at each one once the model acts as an agent, and how do we close it. → [docs/agentic-security-projects.md](docs/agentic-security-projects.md)
