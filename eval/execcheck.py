@@ -183,7 +183,7 @@ def check_sql(ans, tag):
         exp = expected(rows, var)
         keys = set(exp) | set(got)
         if all(abs(got.get(k, Decimal(0)) - exp.get(k, Decimal(0))) < Decimal("0.01") for k in keys):
-            return (2 if var in ("later_day", "within_day", "skip_gaps") else 1), f"matches '{var}' totals ({len(got)} rows)"
+            return 2, f"matches '{var}' totals ({len(got)} rows)"  # any stated, consistent day attribution counts (rubric amended 25 Nov)
     exp = expected(rows, "later_day")
     bad = sorted(k for k in set(exp) | set(got) if abs(got.get(k, Decimal(0)) - exp.get(k, Decimal(0))) >= Decimal("0.01"))
     k = bad[0]

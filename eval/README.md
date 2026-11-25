@@ -51,6 +51,28 @@ Round 1 ([Finding 04](../findings/04-qwen38-vs-80b-blind-eval.md)) used two AI j
 5. **Split reporting.** Executed / checkable / judgment prompts reported separately, not only as one total.
 6. **Every judge on every set.** Both AI judges (and the human pass) score both the original and the length-matched sheets. Report each judge's totals and judge-vs-judge agreement per set. In round 1 the judges differed by 2 points on a 3–5 point prose gap, so the judge is a variable to measure, not a constant. A result that appears with only one judge gets reported as exactly that.
 
+Added 25 Nov 2026, after Eugene Yan's [review of public evals](https://eugeneyan.com/writing/public-evals) (22 Nov 2026), which found evidence in eight of twelve published evals that the grader rejected correct work or passed flawed work:
+
+7. **Negative controls for the AI judges.** Before trusting a judge's scores, give it two known-bad answers per prompt: an empty answer and a confident, wrong one. A judge that scores either above 0 is broken for that prompt, and its scores there are reported as unreliable. Judges only: the human pass has already started on the current sheet, so it is not changed mid-pass.
+8. **Reliability, not just one run.** For the executed prompts (12 to 14, scored by machine), generate each answer 3 times per model at the same settings, prompt cache off, and report pass^3 (how often a model scores 2 on all three) next to the single-run score. Yan's point: reliability is what matters in real use. The lab has already seen why one run is not enough (the prompt cache makes repeated answers differ on ROCm).
+9. **Prompt and rubric must ask for the same thing.** Every point the rubric awards must be something the prompt asked for, or a judgment the prompt clearly invites. The audit below was done before the remaining scoring.
+
+#### Prompt-rubric audit (25 Nov 2026, before the remaining blind scoring)
+
+Read prompt by prompt against `RUBRIC.md` and `execcheck.py`. No answers were opened.
+
+| # | Prompt | Finding | Decision |
+|---|---|---|---|
+| 1, 2, 5, 6, 7, 9, 10, 15 | | Rubric checks only what the prompt asks, or judgment the prompt invites (for example, safety-first ordering in OT triage) | No change |
+| 3, 4 | three-phase, pue-savings | The prompt asks for the formula (3) and a stated assumption (4); the rubric doesn't score them. Harmless direction (nothing hidden is checked) | No change; note in the write-up |
+| 8 | bandwidth-gap | "Ceiling in the right range" is not defined. The prompt asks to rank reasons; the rubric doesn't score ranking | Define the range: 200 to 300 t/s (about 2.5 GB read per token at 640 GB/s is about 258 t/s). Ranking not scored |
+| 11 | agent-injection | "Correct name": the prompt doesn't say how precise | "Prompt injection" counts; "indirect prompt injection" is the precise name but not required |
+| 12 | modbus-parser | The prompt says "reject" without saying how. The hidden tests count a rejection only if the function raises an exception, so an answer that rejects by returning None or an error dict fails tests it arguably passed | An answer that rejects every bad case consistently by return value, and says so, is scored by hand against the same cases. Raising stays the expected route |
+| 13 | meter-rollover | The prompt doesn't say which day an interval crossing midnight belongs to, but `execcheck.py` gives the earlier day 1 point | Any attribution the answer states and applies consistently (later day, earlier day, or dropping the interval) scores 2. Change `execcheck.py` to match |
+| 14 | promql-alert | The rubric text expects a 5-minute average with `for: 10m`; `execcheck.py` also accepts a 10-minute window, which is just as literal a reading | Rubric text aligned with `execcheck.py`: either form scores 2 |
+
+These rubric changes apply to **every** answer, including any already scored. Scores already given on prompts 8, 11, 12, 13 and 14 are rechecked under the amended rubric, and both versions are kept for the write-up. The key-number search in `execcheck.py` stays a weak cross-check only, never a score: Yan shows substring checks passing wrong answers.
+
 ### Round 2: how to run it
 
 ```bash
@@ -78,7 +100,7 @@ What each part does:
 - **Length matching** trims every answer to the shortest non-empty stripped answer for that prompt (word count). An empty answer stays empty and doesn't set the budget.
 - **`execcheck.py`**
   - Prompt 12: imports the answer's `parse_mbap` and runs 7 hidden tests, plus the answer's own pytest tests.
-  - Prompt 13: runs the answer's SQL on PostgreSQL against 3 meters × 2 days of 15-minute data, with a rollover mid-morning, a rollover exactly at midnight and a 2-hour gap. It compares the result with computed daily totals. Attributing an interval to the later reading's day, dropping cross-midnight intervals and dropping intervals across the gap all count as correct. Attributing to the earlier reading's day scores 1.
+  - Prompt 13: runs the answer's SQL on PostgreSQL against 3 meters × 2 days of 15-minute data, with a rollover mid-morning, a rollover exactly at midnight and a 2-hour gap. It compares the result with computed daily totals. Any consistent day attribution for an interval crossing midnight (later day, earlier day, or dropped) and dropping intervals across the gap all count as correct (earlier day scored 1 until the 25 Nov rubric amendment).
   - Prompt 14: `promtool check rules`, then promtool unit tests check that the rule fires for the card above 300 W only and that query (a) returns one 5-minute average per card. A rule that only fails on an annotation template scores 1 (Prometheus won't load it, but the logic is right).
   - These three replace the judges' scores for those prompts. A key-number search for prompts 1–4, 7 and 8 is in the output as a weak cross-check only. LaTeX and tables hide numbers from it, so it isn't used in any total.
 - **`report.py`** prints totals split into executed / computed / judgment, the machine result next to each scorer's score on the executed prompts, scorer-vs-scorer agreement, median length per config, and full vs length-matched totals for each scorer that did both. With `--truth <you>` it also shows how often each judge agrees with the human on passes (2) and on fails (0/1), the judge check Hamel Husain recommends, on a sample too small to be a full validation.

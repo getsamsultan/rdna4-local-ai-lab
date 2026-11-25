@@ -48,7 +48,7 @@ Why this exists: to stand in the shoes of the people deciding whether to run AI 
 
 - [ ] **What does system RAM do for us?** (Sunday 1 Nov) Before spending on a Threadripper Pro / 8-channel board: on Qwen3.8 177B (GPUs 0,1), move experts from VRAM to system RAM step by step with `--n-cpu-moe` (0 → 6 → 12 → 24 → 0 again) and plot generation and prompt speed against GB in RAM. Record the host's measured memory bandwidth and free RAM alongside. **Decision rule:** if speed collapses as experts move to RAM, memory bandwidth is the bottleneck and more channels would pay; if it barely moves, don't buy.
 - [ ] **ROCm vs Vulkan, part 2:** the 80B Q6 on 3× R9700, and Vulkan with experts in RAM (Qwen3.8 on 2 cards is [done](data/2026-10-31-rocm-vs-vulkan.md))
-- [ ] **Blind eval round 2** (Sunday 1 Nov): more executable checks, style stripping, length-matched scoring, a human blind pass, split reporting → [design](eval/README.md#round-2-design-planned-from-community-feedback-on-round-1)
+- [ ] **Blind eval round 2** (Sunday 1 Nov): more executable checks, style stripping, length-matched scoring, a human blind pass, split reporting → [design](eval/README.md#round-2-design-planned-from-community-feedback-on-round-1). Added 25 Nov from [Eugene Yan's review of public evals](https://eugeneyan.com/writing/public-evals): negative controls for the judges, pass^3 on the executed prompts, and a prompt-rubric audit (done; five rubric clarifications). The round 2 write-up credits him
 
 - [ ] **Re-test the 35B through the stack** after the SDMA fix (earlier ~45 t/s vs 75 t/s benchmark — likely the same cause)
 - [ ] **Physical slot swap** to confirm the chipset-slot result is the slot, not the card

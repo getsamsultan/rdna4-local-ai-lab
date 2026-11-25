@@ -1,5 +1,7 @@
 # Scoring rubric
 
+_Amended 25 Nov 2026 (prompts 8, 11, 12, 13, 14) after a prompt-rubric audit, before the remaining blind scoring; see README, round 2, item 9. The amendments apply to every answer, including any already scored._
+
 Score each answer 0, 1 or 2 **before** you look at `key.json`. Read the prompt in `prompts.jsonl`, the answer in the blind sheet, then the matching rubric below.
 
 ## 1. `modbus-frame` (OT protocols)
@@ -32,7 +34,7 @@ Per token: 12 layers × 2 (K,V) × 2 heads × 256 × 2 bytes = 24,576 B (24 KiB)
 
 ## 8. `bandwidth-gap` (LLM inference)
 
-Bytes/token ≈ 3e9 × 6.6/8 ≈ 2.5 GB → ~250 t/s on one card's bandwidth (layer split doesn't add bandwidth for a single token; cards work in turn). Gap: per-token hand-offs between GPUs (~1 ms each), many small kernels / launch overhead and low occupancy at batch 1, expert routing / scattered reads (achieved bandwidth well below peak), attention + other non-weight work, host sync per token. 2 = ceiling in right range with correct 'cards in turn' reasoning + ≥3 sensible reasons; 1 = ceiling or reasons; 0 = claims it's bandwidth-bound at 55.
+Bytes/token ≈ 3e9 × 6.6/8 ≈ 2.5 GB → ~250 t/s on one card's bandwidth (layer split doesn't add bandwidth for a single token; cards work in turn). Gap: per-token hand-offs between GPUs (~1 ms each), many small kernels / launch overhead and low occupancy at batch 1, expert routing / scattered reads (achieved bandwidth well below peak), attention + other non-weight work, host sync per token. 2 = ceiling in right range (200–300 t/s) with correct 'cards in turn' reasoning + ≥3 sensible reasons (ranking not scored); 1 = ceiling or reasons; 0 = claims it's bandwidth-bound at 55.
 
 ## 9. `parallelism` (LLM inference)
 
@@ -44,19 +46,19 @@ Good answers: confirm/scope (what registers, values, still ongoing?), check proc
 
 ## 11. `agent-injection` (Agent security)
 
-Indirect prompt injection (via untrusted data) leading to RCE + exfiltration. Model can't reliably separate instructions from data. Controls: remove/sandbox run_shell (least privilege, no shell for an email agent), egress allow-list / no network from sandbox, human approval for side-effecting tools, recipient allow-list for send_email, mark untrusted content / separate planner from reader (dual LLM), logging & anomaly alerts. 2 = correct name + reason + 4 controls incl. ≥1 non-model control; 1 = partial; 0 = 'tell the model not to'.
+Indirect prompt injection (via untrusted data) leading to RCE + exfiltration. Model can't reliably separate instructions from data. Controls: remove/sandbox run_shell (least privilege, no shell for an email agent), egress allow-list / no network from sandbox, human approval for side-effecting tools, recipient allow-list for send_email, mark untrusted content / separate planner from reader (dual LLM), logging & anomaly alerts. 2 = correct name ('prompt injection' is enough; 'indirect' is the precise term, not required) + reason + 4 controls incl. ≥1 non-model control; 1 = partial; 0 = 'tell the model not to'.
 
 ## 12. `modbus-parser` (Code)
 
-Score by running the tests plus your own: MBAP is 7 bytes (tid 2, pid 2, len 2, unit 1) then FC 1 byte; length counts unit ID + PDU, so len == len(frame) - 6. Raises ValueError (or similar) on each bad case. 2 = correct length rule (frame-6) + all tests pass; 1 = works but off-by-one or missing a case; 0 = doesn't run.
+Score by running the tests plus your own: MBAP is 7 bytes (tid 2, pid 2, len 2, unit 1) then FC 1 byte; length counts unit ID + PDU, so len == len(frame) - 6. Raises ValueError (or similar) on each bad case; an answer that consistently rejects by return value and says so is scored by hand against the same cases. 2 = correct length rule (frame-6) + all tests pass; 1 = works but off-by-one or missing a case; 0 = doesn't run.
 
 ## 13. `meter-rollover` (Data)
 
-Uses LAG() over (partition by meter_id order by ts); delta = cur - prev, if delta < 0 then cur + 1,000,000 - prev (rollover; optionally guard against meter replacement by a sanity cap); sum deltas grouped by date_trunc('day', ts) (attribute delta to the later reading). 2 = LAG + correct rollover arithmetic + daily grouping; 1 = rollover wrong or ignores partition; 0 = sums cumulative values.
+Uses LAG() over (partition by meter_id order by ts); delta = cur - prev, if delta < 0 then cur + 1,000,000 - prev (rollover; optionally guard against meter replacement by a sanity cap); sum deltas grouped by date_trunc('day', ts) (any day attribution for an interval crossing midnight counts, if stated and applied consistently: later day, earlier day, or dropped). 2 = LAG + correct rollover arithmetic + daily grouping; 1 = rollover wrong or ignores partition; 0 = sums cumulative values.
 
 ## 14. `promql-alert` (Monitoring)
 
-(a) avg_over_time(amdgpu_power_watts[5m]) (by card implicitly). (b) expr: avg_over_time(amdgpu_power_watts[5m]) > 300, for: 10m, labels severity, annotations summary using {{ $labels.card }} and {{ $value }}. 2 = valid syntax for both; 1 = minor syntax error; 0 = uses rate() on a gauge or invalid rule.
+(a) avg_over_time(amdgpu_power_watts[5m]) (by card implicitly). (b) expr: avg_over_time(amdgpu_power_watts[5m]) > 300, for: 10m (or a 10-minute window, e.g. avg_over_time(...[10m]) > 300), labels severity, annotations summary using {{ $labels.card }} and {{ $value }}. 2 = valid syntax for both; 1 = minor syntax error; 0 = uses rate() on a gauge or invalid rule.
 
 ## 15. `trap-env-var` (Honesty check)
 
