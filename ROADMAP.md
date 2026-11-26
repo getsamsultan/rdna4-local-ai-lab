@@ -82,12 +82,24 @@ From a widely shared list of 12 "inference infrastructure" projects, rewritten f
 - [ ] **Report the Inkling weight-split rule to llama.cpp** (written by me, per their AI policy), separate from #32718; then offer ROCm results on #32718's patch
 - [ ] **A teaching inference engine for RDNA4:** written from scratch in C++ and HIP, Qwen3 dense on one R9700, measured against llama.cpp on the same GGUF at every step. Milestones M0 (GGUF reader and tokenizer) to M5 (Q8_0) teach how an engine works; M6 to M8 make outputs repeatable by design, harden the server and check provenance at load, the start of an engine you can audit → [design](docs/teaching-engine.md)
 
+### Ways of working
+
+- [x] **Rules for AI coding agents** in [CLAUDE.md](CLAUDE.md), adopted 27 Nov: work on branches and open a PR, never push to `main` or merge (Sam merges); no Claude attribution in commits or PRs; no em dashes; no secrets.
+- [ ] **Enforce them on GitHub, not just in the file:** branch protection on `main` (PR required, no force push, no deletion) and a check that rejects commits not authored by Sam. A rules file is advice to the agent; only the platform enforces. Lesson from 26 Nov: the commit that first proposed these rules was itself authored as Claude.
+- [ ] **Nightly mirror backups** of every repo (`git clone --mirror`) to the 8 TB drive, plus one offsite copy. GitHub's 90-day restore for deleted repos is a safety net, not a backup.
+
+### Lessons for Enact Cyber (from the Songe and OpenAPPA plans)
+
+- **Assess an AI tool before it is installed:** run it isolated, capture what it sends out, check that undo and uninstall leave nothing behind (including services that start at login). The Songe plan is the template.
+- **Judge a guardrail on four numbers, not one:** attacks blocked, tasks still completed, ordinary actions wrongly blocked, and added delay. Vendors usually quote only the first. The OpenAPPA plan is the template.
+- **Read install scripts before running them**, instead of piping them into a shell.
+
 ### Agentic security track
 
 The same 12 layers plus one new one (13: agents that learn from their own conversations), asked a different question: what can an attacker do at each one once the model acts as an agent, and how do we close it. → [docs/agentic-security-projects.md](docs/agentic-security-projects.md)
 
 - [ ] **Test Songe on AMD.** [Songe](https://github.com/sous-labs/songe) (Apache-2.0) trains a LoRA adapter on a local model from the agent's own conversations. Its README lists AMD training and llama.cpp as supported but not tested end to end. Run it on the R9700s with llama.cpp, guess written first, and report on its testing board (issue #15). Doubles as the setup for project 13
-- [ ] **Test OpenAPPA in front of local models.** [OpenAPPA](https://github.com/archestra-ai/OpenAPPA) (MIT, preview): deterministic information-flow checks on every tool call. Its published results are with frontier agents; measure it with local open-weight models as the first step of project 4
+- [ ] **Test OpenAPPA in front of local models.** [OpenAPPA](https://github.com/archestra-ai/OpenAPPA) (MIT, preview): deterministic information-flow checks on every tool call. Its published results are with frontier agents; measure it with local open-weight models as the first step of project 4 → [test plan](docs/test-plans/openappa-local-models.md)
 
 ## Learning
 
