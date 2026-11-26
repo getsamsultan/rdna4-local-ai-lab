@@ -1,4 +1,4 @@
-# Agentic security across the inference stack: 12 projects
+# Agentic security across the inference stack: 13 projects
 
 The usual "12 inference infrastructure projects" list asks how to make each layer faster and cheaper. This version asks, at the same 12 layers, **what an attacker can do there once a model is acting as an agent, and how to close the gap.** Each project is defensive, runs on this lab's own hardware against its own services, and ends in a published measurement, not a claim.
 
@@ -18,6 +18,7 @@ Agents change the threat model: the model's output is no longer just text, it be
 | 10 | Model router | Downgrade to a weaker model; data sent outside |
 | 11 | Edge fallback | Weaker safety when the main service is down |
 | 12 | Public benchmark | Security measured as seriously as speed |
+| 13 | Self-learning agents | An injected instruction learned into the weights, not just followed once |
 
 ---
 
@@ -52,6 +53,8 @@ Agents change the threat model: the model's output is no longer just text, it be
 **Risk.** Grammar-constrained decoding guarantees valid JSON, not safe JSON. A valid tool call can still carry `rm -rf`, a SQL `DROP`, or a URL to an attacker's server, often planted by a prompt injection in a web page or document the agent read.
 
 **Build.** A decoding layer where the grammar is generated from an allowlist policy: permitted tools, argument types, value ranges and patterns (for example, only read-only SQL, only paths under a sandbox, only allowlisted domains). Then an injection test set: documents that try to make the agent call tools it should not.
+
+**Reference to test first, not rebuild:** [OpenAPPA](https://github.com/archestra-ai/OpenAPPA) (MIT, preview), which sits between an agent and its tools, labels everything the agent reads by sensitivity and trust, and blocks a tool call when that data would reach a destination the policy doesn't allow. The decision is deterministic and replayable from its event log. Its published results come from frontier-model agents; run it in front of local open-weight models on this rig, against the same injection set, and measure attacks blocked and tasks still completed. Then add the grammar-from-policy layer on top and see what each adds.
 
 **Shows:** you can make unsafe tool calls impossible to generate, not just unlikely.
 
@@ -119,6 +122,16 @@ Agents change the threat model: the model's output is no longer just text, it be
 
 **Shows:** you measure security with the same rigour as performance, and publish it.
 
+### 13. Self-learning agents: poisoned lessons
+
+**Risk.** A new kind of tool learns from an agent's own conversations and fine-tunes the local model overnight (for example [Songe](https://github.com/sous-labs/songe), a proxy that turns corrections, retries and tool errors into lessons and trains a LoRA adapter). If a web page, email or document the agent read carried an injected instruction, and that conversation becomes a lesson, the model can learn the attacker's behaviour into its weights. A prompt injection then outlives the session that delivered it.
+
+**Build.** On the lab's own agent and model: plant injected instructions in documents the agent reads during normal tasks, let the learning cycle run, then test the new version on clean tasks with no injection present. Measure how often the planted behaviour appears afterwards, against a control run without the planted documents. Then test defences: excluding turns that followed untrusted content from training, provenance labels on every lesson (from the same idea as project 4's data labels), and a safety check in the gate that decides whether a new version goes live.
+
+**Shows:** you can see a threat that appears only when models start learning from their own work, before it ships to people's laptops.
+
+Raise findings with the tool's authors privately first, as a question about their design, not a public claim.
+
 ---
 
 ## Ground rules
@@ -129,4 +142,4 @@ Agents change the threat model: the model's output is no longer just text, it be
 
 ## Order (after the Lemonade entry and eval round 2)
 
-Start with the ones that reuse existing work: **1** (from the prompt-cache finding), **6** (from the Ripple and Inkling quant reports), **10** (from the planned egress audit and routing eval) and **4** (the core of agent safety). Then 9, 8, 7, 3, 12. Projects 2, 5 and 11 are research-grade and come last.
+Start with the ones that reuse existing work: **1** (from the prompt-cache finding), **6** (from the Ripple and Inkling quant reports), **10** (from the planned egress audit and routing eval) and **4** (the core of agent safety). Then 9, 8, 7, 3, 12. Projects 2, 5 and 11 are research-grade and come last. Project 13 starts after 4, since it reuses the injection set and the data labels.
