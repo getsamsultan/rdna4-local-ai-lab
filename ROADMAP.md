@@ -86,8 +86,8 @@ From a widely shared list of 12 "inference infrastructure" projects, rewritten f
 
 The same 12 layers plus one new one (13: agents that learn from their own conversations), asked a different question: what can an attacker do at each one once the model acts as an agent, and how do we close it. → [docs/agentic-security-projects.md](docs/agentic-security-projects.md)
 
-- [ ] **Test Songe on AMD.** [Songe](https://github.com/sous-labs/songe) (Apache-2.0) trains a LoRA adapter on a local model from the agent's own conversations. Its README lists AMD training and llama.cpp as supported but not tested end to end. Run it on the R9700s with llama.cpp, guess written first, and report on its testing board (issue #15). Doubles as the setup for project 13
-- [ ] **Test OpenAPPA in front of local models.** [OpenAPPA](https://github.com/archestra-ai/OpenAPPA) (MIT, preview): deterministic information-flow checks on every tool call. Its published results are with frontier agents; measure it with local open-weight models as the first step of project 4
+- [ ] **Test Songe on AMD.** [Songe](https://github.com/sous-labs/songe) (Apache-2.0) trains a LoRA adapter on a local model from the agent's own conversations. Its README lists AMD training and llama.cpp as supported but not tested end to end. Run it on the R9700s with llama.cpp, guess written first, and report on its testing board (issue #15). Doubles as the setup for project 13. Test plan lives in the model editing lab, since Songe changes weights → [Songe test plan](https://github.com/getsamsultan/model-editing-lab/blob/main/plans/songe-self-learning.md)
+- [ ] **Test OpenAPPA in front of local models.** [OpenAPPA](https://github.com/archestra-ai/OpenAPPA) (MIT, preview): deterministic information-flow checks on every tool call. Its published results are with frontier agents; measure it with local open-weight models as the first step of project 4, then against a Songe-poisoned adapter → [OpenAPPA test plan](docs/test-plans/openappa-local-models.md)
 
 ## Learning
 
