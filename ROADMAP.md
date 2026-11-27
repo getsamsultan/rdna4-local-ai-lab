@@ -77,6 +77,16 @@ From a widely shared list of 12 "inference infrastructure" projects, rewritten f
 - [ ] **Edge fallback:** a small model on a laptop or in the browser when the rig is down
 - [x] **Public benchmarks:** this lab; next, Pareto curves (cost vs time to first token vs throughput) for llama.cpp, Lemonade and vLLM on ROCm
 
+### Architecture research
+
+What open models are changing (sparse attention, linear-attention hybrids, looped layers, conditional memory in RAM, FP4 releases) and which questions are worth measuring on this rig → [architecture map](docs/architecture-map.md)
+
+- [ ] **Sparse attention on ROCm, full scale:** DeepSeek V4-Flash first (mature llama.cpp support), then GLM-5.3-Flash (support merged 30 Sep 2026, checked upstream only on a tiny model). KLD against a CPU reference, guess written first
+- [ ] **Prompt cache and recurrent state:** repeat the prompt-cache null tests on Qwen3-Coder-Next 80B (Gated DeltaNet hybrid, already on the rig)
+- [ ] **One placement study for every new layout:** loops, recurrent plus KV, n-gram tables in RAM
+- [ ] **FP4-native experts:** is a 4-bit GGUF of DeepSeek V4-Flash close to lossless, and how fast are 4-bit kernels on gfx1201
+- [ ] Watch: GigaChat 4's 37B-A4B sibling (fits one card if it ships)
+
 ### My own engine
 
 - [ ] **Report the Inkling weight-split rule to llama.cpp** (written by me, per their AI policy), separate from #32718; then offer ROCm results on #32718's patch
